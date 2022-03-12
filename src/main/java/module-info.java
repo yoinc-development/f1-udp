@@ -12,4 +12,6 @@ module com.ngwn.f1udp {
 
     opens com.ngwn.f1udp to javafx.fxml;
     exports com.ngwn.f1udp;
+    opens com.ngwn.f1udp.controller to javafx.fxml;
+    exports com.ngwn.f1udp.controller;
 }
