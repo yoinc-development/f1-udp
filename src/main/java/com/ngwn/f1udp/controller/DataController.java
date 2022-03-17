@@ -12,7 +12,7 @@ public class DataController {
 
     public DataController() {
         receiver = new Receiver(this);
-        receiver.execute();
+        new Thread(receiver).start();
     }
 
     public synchronized void handlePacket(byte[] packet) {
