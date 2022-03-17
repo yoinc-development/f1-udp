@@ -10,6 +10,8 @@ This is a JavaFX application to display and handle F 2021 telemetry data.
 
 ## Setup
 
+For game specific issues (and a guide on how their system works) please refer to their [forum thread]( https://forums.codemasters.com/topic/80231-f1-2021-udp-specification/).
+
 x
 
 ## Manual
