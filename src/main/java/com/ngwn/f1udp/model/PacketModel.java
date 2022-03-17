@@ -19,7 +19,7 @@ public class PacketModel {
     private short mPacketId;
     private BigInteger mSessionUID;
     private float mSessionTime;
-    private short mFrameIdentifier;
+    private int mFrameIdentifier;
     private short mPlayerCarIndex;
     private short mSecondaryCarIndex;
 
@@ -33,8 +33,8 @@ public class PacketModel {
         mPacketVersion = TypeConverter.convertUint8(byteBuffer.get());
         mPacketId = TypeConverter.convertUint8(byteBuffer.get());
         mSessionUID = TypeConverter.convertUint64(byteBuffer.getLong());
-        mSessionTime = TypeConverter.convertUint8(byteBuffer.get());
-        //mFrameIdentifier = TypeConverter.convertUint32(byteBuffer.get());
+        mSessionTime = byteBuffer.getFloat();
+        mFrameIdentifier = byteBuffer.getInt();
         mPlayerCarIndex = TypeConverter.convertUint8(byteBuffer.get());
         mSecondaryCarIndex = TypeConverter.convertUint8(byteBuffer.get());
 
@@ -96,7 +96,7 @@ public class PacketModel {
         this.mSessionTime = mSessionTime;
     }
 
-    public short getmFrameIdentifier() {
+    public int getmFrameIdentifier() {
         return mFrameIdentifier;
     }
 
@@ -126,5 +126,12 @@ public class PacketModel {
 
     public void setmSecondaryCarIndex(short mSecondaryCarIndex) {
         this.mSecondaryCarIndex = mSecondaryCarIndex;
+    }
+
+    @Override
+    public String toString() {
+        return "PacketFormat: " + getmPacketFormat() + "\n"
+                + "SessionUId: " + getmSessionUID() + "\n"
+                + "PacketId: " + getmPacketId() + "\n";
     }
 }
