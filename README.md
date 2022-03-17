@@ -1,5 +1,8 @@
 # f-upd
 
+[![GitHub release](https://img.shields.io/github/v/release/ngwn-studio/f1-udp?include_prereleases&style=for-the-badge)](https://github.com/ngwn-studio/f1-udp/releases)
+[![GitHub issues](https://img.shields.io/github/issues/ngwn-studio/f1-udp?style=for-the-badge)](https://github.com/ngwn-studio/f1-udp/issues)
+
 ## Summary
 This is a JavaFX application to display and handle F 2021 telemetry data.
 
