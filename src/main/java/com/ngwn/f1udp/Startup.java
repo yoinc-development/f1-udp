@@ -7,12 +7,12 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+public class Startup extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
+        FXMLLoader fxmlLoader = new FXMLLoader(Startup.class.getResource("startup.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 300, 100);
+        stage.setTitle("F1 2021 - Telemetry Tool");
         stage.setScene(scene);
         stage.show();
     }

@@ -4,16 +4,19 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 
-public class HelloController {
+public class StartupController {
 
     private DataController controller;
 
     @FXML
-    private Label welcomeText;
+    protected void spectatorButtonClick() {
+
+        controller = new DataController();
+
+    }
 
     @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
+    protected void playerButtonClick() {
 
         controller = new DataController();
 
