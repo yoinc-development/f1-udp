@@ -1,20 +1,20 @@
 package com.ngwn.f1udp;
 
+import com.ngwn.f1udp.utils.StageBuilder;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class Startup extends Application {
     @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Startup.class.getResource("startup.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 300, 100);
-        stage.setTitle("F1 2021 - Telemetry Tool");
-        stage.setScene(scene);
-        stage.show();
+    public void start(Stage stage) {
+
+        try {
+            StageBuilder.buildStage("F1 2021 - Telemetry Tool", "startup.fxml", 300, 100, stage).show();
+        } catch (IOException io) {
+            System.out.println("Error creating stage.");
+        }
     }
 
     public static void main(String[] args) {

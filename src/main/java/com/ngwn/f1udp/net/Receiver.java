@@ -1,12 +1,10 @@
 package com.ngwn.f1udp.net;
 
 import com.ngwn.f1udp.controller.DataController;
-import javafx.scene.chart.PieChart;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.SocketException;
 
 public class Receiver extends Thread {
 
