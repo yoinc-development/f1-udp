@@ -4,6 +4,10 @@ import com.ngwn.f1udp.utils.TypeConverter;
 
 import java.nio.ByteBuffer;
 
+/**
+ * This class contains the data of a MarshalZone attribute
+ * @author jth
+ */
 public class MarshalZoneModel {
 
     private float mZoneStart;

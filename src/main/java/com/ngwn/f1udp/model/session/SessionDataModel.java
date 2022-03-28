@@ -1,7 +1,9 @@
 package com.ngwn.f1udp.model.session;
 
 import com.ngwn.f1udp.model.PacketModel;
+import com.ngwn.f1udp.utils.TypeConverter;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
@@ -57,6 +59,20 @@ public class SessionDataModel extends PacketModel {
 
     public SessionDataModel(byte[] packet) {
         super(packet);
+
+        ByteBuffer superBuffer = super.getByteBuffer();
+
+        mWeather = TypeConverter.convertUint8(superBuffer.get());
+        mTrackTemperature = TypeConverter.convertUint8(superBuffer.get());
+        mAirTemperature = TypeConverter.convertUint8(superBuffer.get());
+        mTotalLaps = TypeConverter.convertUint8(superBuffer.get());
+        mTrackLength = TypeConverter.convertUint8(superBuffer.get());
+        mSessionType = TypeConverter.convertUint8(superBuffer.get());
+
+
+        mTrackId = TypeConverter.convertUint8(superBuffer.get());
+        mFormula = TypeConverter.convertUint8(superBuffer.get());
+
 
 
     }

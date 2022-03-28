@@ -4,6 +4,10 @@ import com.ngwn.f1udp.utils.TypeConverter;
 
 import java.nio.ByteBuffer;
 
+/**
+ * This class contains the data of a WeatherForecastSample attribute
+ * @author jth
+ */
 public class WeatherForecastSampleModel {
 
     private int mSessionType;
