@@ -12,34 +12,41 @@ public class Receiver extends Thread {
     private DataController controller;
     private static int MAX_BUFFER = 2048;
     private boolean is_running;
-    int counter = 01;
+    DatagramSocket socket = null;
 
     public Receiver(DataController controller) {
         this.controller = controller;
         this.is_running = true;
+        try {
+            this.socket = new DatagramSocket(port);
+        } catch (IOException ex) {
+            System.out.println("Port is in use.");
+        }
     }
 
     public void run() {
-        System.out.println("Been here:" + counter);
 
-        try {
-            DatagramSocket socket = new DatagramSocket(port);
-            byte[] buffer = new byte[MAX_BUFFER];
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+        byte[] buffer = new byte[MAX_BUFFER];
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
-            socket.receive(packet);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    controller.handlePacket(buffer);
+        if (socket != null) {
+            try {
+                socket.receive(packet);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        controller.handlePacket(buffer);
+                    }
+                }).run();
+
+                packet.setLength(buffer.length);
+                while (is_running) {
+                    run();
                 }
-            }).run();
-
-            packet.setLength(buffer.length);
-
-
-        } catch (IOException ex) {
-            System.out.println("Check port: '" + port + "' or packet.");
+            } catch (IOException ex) {
+                System.out.println("Check package.");
+            }
         }
+
     }
 }

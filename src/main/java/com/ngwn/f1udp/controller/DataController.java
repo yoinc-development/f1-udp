@@ -24,6 +24,7 @@ public class DataController {
 
     public synchronized void handlePacket(byte[] packet) {
         PacketModel packetModel = new PacketModel(packet);
+        System.out.println("check");
 
         if(packetModel != null) {
             switch (packetModel.getmPacketId()) {
