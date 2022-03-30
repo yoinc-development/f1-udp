@@ -3,7 +3,7 @@ name: Add Feature from Documentation
 about: Only use this template to add a feature which has been described in the official
   F1 documentation. (link in readme)
 title: ''
-labels: enhancement
+labels: feature
 assignees: ''
 
 ---
