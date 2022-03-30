@@ -28,7 +28,7 @@ public class SessionDataModel extends PacketModel {
     private int mGamePaused;
     private int mIsSpectating;
     private int mSpectatorCarIndex;
-    private int mSpliProNativeSupport;
+    private int mSliProNativeSupport;
     private int mNumMarshalZones;
     private List<MarshalZoneModel> mMarshalZones;
     private int mSafetyCarStatus;
@@ -39,10 +39,9 @@ public class SessionDataModel extends PacketModel {
     private int mForecastAccuracy;
     private int mAiDifficulty;
 
-    //32er block
-    private int mSeasonLinkIdentifier;
-    private int mWeekendLinkIdentifier;
-    private int mSessionLinkIdentifier;
+    private long mSeasonLinkIdentifier;
+    private long mWeekendLinkIdentifier;
+    private long mSessionLinkIdentifier;
 
     private int mPitStopWindowIdealLap;
     private int mPitStopWindowLatestLap;
@@ -72,6 +71,45 @@ public class SessionDataModel extends PacketModel {
         mTrackId = TypeConverter.convertUint8(superBuffer.get());
         mFormula = TypeConverter.convertUint8(superBuffer.get());
 
+        mSessionTimeLeft = TypeConverter.convertUint16(superBuffer.getShort());
+        mSessionDuration = TypeConverter.convertUint16(superBuffer.getShort());
+        mPitSpeedLimit = TypeConverter.convertUint8(superBuffer.get());
+        mGamePaused = TypeConverter.convertUint8(superBuffer.get());
+        mIsSpectating = TypeConverter.convertUint8(superBuffer.get());
+        mSpectatorCarIndex = TypeConverter.convertUint8(superBuffer.get());
+        mSliProNativeSupport = TypeConverter.convertUint8(superBuffer.get());
+        mNumMarshalZones = TypeConverter.convertUint8(superBuffer.get());
+        for(int counter = 0; counter < getmNumMarshalZones(); counter++) {
+            MarshalZoneModel marshalZoneModel = new MarshalZoneModel(superBuffer);
+            mMarshalZones.add(marshalZoneModel);
+        }
+        mSafetyCarStatus = TypeConverter.convertUint8(superBuffer.get());
+
+        mNetworkGame = TypeConverter.convertUint8(superBuffer.get());
+        mNumWeatherForecastSamples = TypeConverter.convertUint8(superBuffer.get());
+        for(int counter = 0; counter < getmNumWeatherForecastSamples(); counter++) {
+            WeatherForecastSampleModel weatherForecastSampleModel = new WeatherForecastSampleModel(superBuffer);
+            mWeatherForecastSamples.add(weatherForecastSampleModel);
+        }
+        mForecastAccuracy = TypeConverter.convertUint8(superBuffer.get());
+        mAiDifficulty = TypeConverter.convertUint8(superBuffer.get());
+
+        mSeasonLinkIdentifier = TypeConverter.convertUint32(superBuffer.get());
+        mWeekendLinkIdentifier = TypeConverter.convertUint32(superBuffer.get());
+        mSessionLinkIdentifier = TypeConverter.convertUint32(superBuffer.get());
+
+        mPitStopWindowIdealLap = TypeConverter.convertUint8(superBuffer.get());
+        mPitStopWindowLatestLap = TypeConverter.convertUint8(superBuffer.get());
+        mPitStopRejoinPosition = TypeConverter.convertUint8(superBuffer.get());
+        mSteeringAssist = TypeConverter.convertUint8(superBuffer.get());
+        mBreakingAssist = TypeConverter.convertUint8(superBuffer.get());
+        mGearboxAssist = TypeConverter.convertUint8(superBuffer.get());
+        mPitAssist = TypeConverter.convertUint8(superBuffer.get());
+        mPitreleaseAssist = TypeConverter.convertUint8(superBuffer.get());
+        mERSAssist = TypeConverter.convertUint8(superBuffer.get());
+        mDRSAssist = TypeConverter.convertUint8(superBuffer.get());
+        mDynamicRacingLine = TypeConverter.convertUint8(superBuffer.get());
+        mDynamicRacingLineType = TypeConverter.convertUint8(superBuffer.get());
 
     }
 
@@ -187,12 +225,12 @@ public class SessionDataModel extends PacketModel {
         this.mSpectatorCarIndex = mSpectatorCarIndex;
     }
 
-    public int getmSpliProNativeSupport() {
-        return mSpliProNativeSupport;
+    public int getmSliProNativeSupport() {
+        return mSliProNativeSupport;
     }
 
-    public void setmSpliProNativeSupport(int mSpliProNativeSupport) {
-        this.mSpliProNativeSupport = mSpliProNativeSupport;
+    public void setmSliProNativeSupport(int mSliProNativeSupport) {
+        this.mSliProNativeSupport = mSliProNativeSupport;
     }
 
     public int getmNumMarshalZones() {
@@ -259,27 +297,27 @@ public class SessionDataModel extends PacketModel {
         this.mAiDifficulty = mAiDifficulty;
     }
 
-    public int getmSeasonLinkIdentifier() {
+    public long getmSeasonLinkIdentifier() {
         return mSeasonLinkIdentifier;
     }
 
-    public void setmSeasonLinkIdentifier(int mSeasonLinkIdentifier) {
+    public void setmSeasonLinkIdentifier(long mSeasonLinkIdentifier) {
         this.mSeasonLinkIdentifier = mSeasonLinkIdentifier;
     }
 
-    public int getmWeekendLinkIdentifier() {
+    public long getmWeekendLinkIdentifier() {
         return mWeekendLinkIdentifier;
     }
 
-    public void setmWeekendLinkIdentifier(int mWeekendLinkIdentifier) {
+    public void setmWeekendLinkIdentifier(long mWeekendLinkIdentifier) {
         this.mWeekendLinkIdentifier = mWeekendLinkIdentifier;
     }
 
-    public int getmSessionLinkIdentifier() {
+    public long getmSessionLinkIdentifier() {
         return mSessionLinkIdentifier;
     }
 
-    public void setmSessionLinkIdentifier(int mSessionLinkIdentifier) {
+    public void setmSessionLinkIdentifier(long mSessionLinkIdentifier) {
         this.mSessionLinkIdentifier = mSessionLinkIdentifier;
     }
 
@@ -408,7 +446,7 @@ public class SessionDataModel extends PacketModel {
                 + "Game Paused: " + getmGamePaused() + "\n"
                 + "Is Spectating: " + getmIsSpectating() + "\n"
                 + "Spectator Car Index: " + getmSpectatorCarIndex() + "\n"
-                + "SpliProNativeSupport: " + getmSpliProNativeSupport() + "\n"
+                + "SliProNativeSupport: " + getmSliProNativeSupport() + "\n"
                 + "Num Marshal Zones: " + getmNumMarshalZones() + "\n"
                 + "Marshal Zones: ( " + marshalZones.toString() + " )\n"
                 + "Safety Car Status: " + getmSafetyCarStatus() + "\n"
