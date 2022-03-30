@@ -1,14 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.ngwn.f1udp.controller.PlayerController"
-            prefHeight="400.0" prefWidth="600.0">
 
-</AnchorPane>
+<TabPane prefHeight="373.0" prefWidth="640.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ngwn.f1udp.controller.SpectatorController">
+    <tabs>
+        <Tab id="fp1_tab" text="Free Practise 1">
+            <content>
+                <ListView id="fp1_list" prefHeight="200.0" prefWidth="200.0" />
+            </content>
+        </Tab>
+        <Tab id="fp2_tab" text="Free Practise 2">
+            <content>
+                <ListView id="fp2_list" prefHeight="200.0" prefWidth="200.0" />
+            </content>
+        </Tab>
+        <Tab id="fp3_tab" text="Free Practise 3">
+            <content>
+                <ListView id="fp3_list" prefHeight="200.0" prefWidth="200.0" />
+            </content>
+        </Tab>
+        <Tab id="quali_tab" text="Qualification">
+            <content>
+                <ListView id="quali_list" prefHeight="200.0" prefWidth="200.0" />
+            </content>
+        </Tab>
+        <Tab id="race_tab" text="Race">
+            <content>
+                <ListView id="race_list" prefHeight="200.0" prefWidth="200.0" />
+            </content>
+        </Tab>
+    </tabs>
+</TabPane>
