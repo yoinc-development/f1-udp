@@ -2,8 +2,10 @@ package com.ngwn.f1udp.controller;
 
 import com.ngwn.f1udp.model.PacketModel;
 import com.ngwn.f1udp.model.ParticipantPacketModel;
+import com.ngwn.f1udp.model.cardamage.CarDamageDataCollectionModel;
 import com.ngwn.f1udp.net.Receiver;
 
+import java.net.StandardSocketOptions;
 import java.util.Set;
 
 public class DataController {
@@ -30,6 +32,10 @@ public class DataController {
                 case 4:
                     ParticipantPacketModel participantPacketModel = new ParticipantPacketModel(packet);
                     System.out.println(participantPacketModel.toString());
+                    break;
+                case 10:
+                    CarDamageDataCollectionModel carDamageDataCollectionModel = new CarDamageDataCollectionModel(packet);
+                    System.out.println(carDamageDataCollectionModel.toString());
                     break;
             }
         }

@@ -10,6 +10,7 @@ public class PacketModel {
 
     public static int HEADER_SIZE = 21;
     public static int PACKET_FORMAT = 2018;
+    public static int NUMBER_OF_CARS = 22;
 
     private ByteBuffer byteBuffer;
     private int mPacketFormat;
