@@ -28,7 +28,7 @@ public class SessionDataModel extends PacketModel {
     private int mGamePaused;
     private int mIsSpectating;
     private int mSpectatorCarIndex;
-    private int mSliProNativeSupport;
+    private int mSpliProNativeSupport;
     private int mNumMarshalZones;
     private List<MarshalZoneModel> mMarshalZones;
     private int mSafetyCarStatus;
@@ -69,11 +69,368 @@ public class SessionDataModel extends PacketModel {
         mTrackLength = TypeConverter.convertUint8(superBuffer.get());
         mSessionType = TypeConverter.convertUint8(superBuffer.get());
 
-
         mTrackId = TypeConverter.convertUint8(superBuffer.get());
         mFormula = TypeConverter.convertUint8(superBuffer.get());
 
 
+    }
 
+    public int getmWeather() {
+        return mWeather;
+    }
+
+    public void setmWeather(int mWeather) {
+        this.mWeather = mWeather;
+    }
+
+    public int getmTrackTemperature() {
+        return mTrackTemperature;
+    }
+
+    public void setmTrackTemperature(int mTrackTemperature) {
+        this.mTrackTemperature = mTrackTemperature;
+    }
+
+    public int getmAirTemperature() {
+        return mAirTemperature;
+    }
+
+    public void setmAirTemperature(int mAirTemperature) {
+        this.mAirTemperature = mAirTemperature;
+    }
+
+    public int getmTotalLaps() {
+        return mTotalLaps;
+    }
+
+    public void setmTotalLaps(int mTotalLaps) {
+        this.mTotalLaps = mTotalLaps;
+    }
+
+    public int getmTrackLength() {
+        return mTrackLength;
+    }
+
+    public void setmTrackLength(int mTrackLength) {
+        this.mTrackLength = mTrackLength;
+    }
+
+    public int getmSessionType() {
+        return mSessionType;
+    }
+
+    public void setmSessionType(int mSessionType) {
+        this.mSessionType = mSessionType;
+    }
+
+    public int getmTrackId() {
+        return mTrackId;
+    }
+
+    public void setmTrackId(int mTrackId) {
+        this.mTrackId = mTrackId;
+    }
+
+    public int getmFormula() {
+        return mFormula;
+    }
+
+    public void setmFormula(int mFormula) {
+        this.mFormula = mFormula;
+    }
+
+    public int getmSessionTimeLeft() {
+        return mSessionTimeLeft;
+    }
+
+    public void setmSessionTimeLeft(int mSessionTimeLeft) {
+        this.mSessionTimeLeft = mSessionTimeLeft;
+    }
+
+    public int getmSessionDuration() {
+        return mSessionDuration;
+    }
+
+    public void setmSessionDuration(int mSessionDuration) {
+        this.mSessionDuration = mSessionDuration;
+    }
+
+    public int getmPitSpeedLimit() {
+        return mPitSpeedLimit;
+    }
+
+    public void setmPitSpeedLimit(int mPitSpeedLimit) {
+        this.mPitSpeedLimit = mPitSpeedLimit;
+    }
+
+    public int getmGamePaused() {
+        return mGamePaused;
+    }
+
+    public void setmGamePaused(int mGamePaused) {
+        this.mGamePaused = mGamePaused;
+    }
+
+    public int getmIsSpectating() {
+        return mIsSpectating;
+    }
+
+    public void setmIsSpectating(int mIsSpectating) {
+        this.mIsSpectating = mIsSpectating;
+    }
+
+    public int getmSpectatorCarIndex() {
+        return mSpectatorCarIndex;
+    }
+
+    public void setmSpectatorCarIndex(int mSpectatorCarIndex) {
+        this.mSpectatorCarIndex = mSpectatorCarIndex;
+    }
+
+    public int getmSpliProNativeSupport() {
+        return mSpliProNativeSupport;
+    }
+
+    public void setmSpliProNativeSupport(int mSpliProNativeSupport) {
+        this.mSpliProNativeSupport = mSpliProNativeSupport;
+    }
+
+    public int getmNumMarshalZones() {
+        return mNumMarshalZones;
+    }
+
+    public void setmNumMarshalZones(int mNumMarshalZones) {
+        this.mNumMarshalZones = mNumMarshalZones;
+    }
+
+    public List<MarshalZoneModel> getmMarshalZones() {
+        return mMarshalZones;
+    }
+
+    public void setmMarshalZones(List<MarshalZoneModel> mMarshalZones) {
+        this.mMarshalZones = mMarshalZones;
+    }
+
+    public int getmSafetyCarStatus() {
+        return mSafetyCarStatus;
+    }
+
+    public void setmSafetyCarStatus(int mSafetyCarStatus) {
+        this.mSafetyCarStatus = mSafetyCarStatus;
+    }
+
+    public int getmNetworkGame() {
+        return mNetworkGame;
+    }
+
+    public void setmNetworkGame(int mNetworkGame) {
+        this.mNetworkGame = mNetworkGame;
+    }
+
+    public int getmNumWeatherForecastSamples() {
+        return mNumWeatherForecastSamples;
+    }
+
+    public void setmNumWeatherForecastSamples(int mNumWeatherForecastSamples) {
+        this.mNumWeatherForecastSamples = mNumWeatherForecastSamples;
+    }
+
+    public List<WeatherForecastSampleModel> getmWeatherForecastSamples() {
+        return mWeatherForecastSamples;
+    }
+
+    public void setmWeatherForecastSamples(List<WeatherForecastSampleModel> mWeatherForecastSamples) {
+        this.mWeatherForecastSamples = mWeatherForecastSamples;
+    }
+
+    public int getmForecastAccuracy() {
+        return mForecastAccuracy;
+    }
+
+    public void setmForecastAccuracy(int mForecastAccuracy) {
+        this.mForecastAccuracy = mForecastAccuracy;
+    }
+
+    public int getmAiDifficulty() {
+        return mAiDifficulty;
+    }
+
+    public void setmAiDifficulty(int mAiDifficulty) {
+        this.mAiDifficulty = mAiDifficulty;
+    }
+
+    public int getmSeasonLinkIdentifier() {
+        return mSeasonLinkIdentifier;
+    }
+
+    public void setmSeasonLinkIdentifier(int mSeasonLinkIdentifier) {
+        this.mSeasonLinkIdentifier = mSeasonLinkIdentifier;
+    }
+
+    public int getmWeekendLinkIdentifier() {
+        return mWeekendLinkIdentifier;
+    }
+
+    public void setmWeekendLinkIdentifier(int mWeekendLinkIdentifier) {
+        this.mWeekendLinkIdentifier = mWeekendLinkIdentifier;
+    }
+
+    public int getmSessionLinkIdentifier() {
+        return mSessionLinkIdentifier;
+    }
+
+    public void setmSessionLinkIdentifier(int mSessionLinkIdentifier) {
+        this.mSessionLinkIdentifier = mSessionLinkIdentifier;
+    }
+
+    public int getmPitStopWindowIdealLap() {
+        return mPitStopWindowIdealLap;
+    }
+
+    public void setmPitStopWindowIdealLap(int mPitStopWindowIdealLap) {
+        this.mPitStopWindowIdealLap = mPitStopWindowIdealLap;
+    }
+
+    public int getmPitStopWindowLatestLap() {
+        return mPitStopWindowLatestLap;
+    }
+
+    public void setmPitStopWindowLatestLap(int mPitStopWindowLatestLap) {
+        this.mPitStopWindowLatestLap = mPitStopWindowLatestLap;
+    }
+
+    public int getmPitStopRejoinPosition() {
+        return mPitStopRejoinPosition;
+    }
+
+    public void setmPitStopRejoinPosition(int mPitStopRejoinPosition) {
+        this.mPitStopRejoinPosition = mPitStopRejoinPosition;
+    }
+
+    public int getmSteeringAssist() {
+        return mSteeringAssist;
+    }
+
+    public void setmSteeringAssist(int mSteeringAssist) {
+        this.mSteeringAssist = mSteeringAssist;
+    }
+
+    public int getmBreakingAssist() {
+        return mBreakingAssist;
+    }
+
+    public void setmBreakingAssist(int mBreakingAssist) {
+        this.mBreakingAssist = mBreakingAssist;
+    }
+
+    public int getmGearboxAssist() {
+        return mGearboxAssist;
+    }
+
+    public void setmGearboxAssist(int mGearboxAssist) {
+        this.mGearboxAssist = mGearboxAssist;
+    }
+
+    public int getmPitAssist() {
+        return mPitAssist;
+    }
+
+    public void setmPitAssist(int mPitAssist) {
+        this.mPitAssist = mPitAssist;
+    }
+
+    public int getmPitreleaseAssist() {
+        return mPitreleaseAssist;
+    }
+
+    public void setmPitreleaseAssist(int mPitreleaseAssist) {
+        this.mPitreleaseAssist = mPitreleaseAssist;
+    }
+
+    public int getmERSAssist() {
+        return mERSAssist;
+    }
+
+    public void setmERSAssist(int mERSAssist) {
+        this.mERSAssist = mERSAssist;
+    }
+
+    public int getmDRSAssist() {
+        return mDRSAssist;
+    }
+
+    public void setmDRSAssist(int mDRSAssist) {
+        this.mDRSAssist = mDRSAssist;
+    }
+
+    public int getmDynamicRacingLine() {
+        return mDynamicRacingLine;
+    }
+
+    public void setmDynamicRacingLine(int mDynamicRacingLine) {
+        this.mDynamicRacingLine = mDynamicRacingLine;
+    }
+
+    public int getmDynamicRacingLineType() {
+        return mDynamicRacingLineType;
+    }
+
+    public void setmDynamicRacingLineType(int mDynamicRacingLineType) {
+        this.mDynamicRacingLineType = mDynamicRacingLineType;
+    }
+
+    @Override
+    public String toString(){
+
+        StringBuilder marshalZones = new StringBuilder();
+        for(MarshalZoneModel z : getmMarshalZones()) {
+            marshalZones.append(z.toString());
+            marshalZones.append("\n");
+        }
+
+        StringBuilder weatherForecastSamples = new StringBuilder();
+        for(WeatherForecastSampleModel w : getmWeatherForecastSamples()) {
+            weatherForecastSamples.append(w.toString());
+            weatherForecastSamples.append("\n");
+        }
+
+        return "Weather: " + getmWeather() + "\n"
+                + "Track Temperature: " + getmTrackTemperature() + "\n"
+                + "Air Temperature: " + getmAirTemperature() + "\n"
+                + "Total Laps: " + getmTotalLaps() + "\n"
+                + "Track Length: " + getmTrackLength() + "\n"
+                + "Session Type: " + getmSessionType() + "\n"
+                + "Track Id: " + getmTrackId() + "\n"
+                + "Formula: " + getmFormula() + "\n"
+                + "Session Time Left: " + getmSessionTimeLeft() + "\n"
+                + "Session Duration: " + getmSessionDuration() + "\n"
+                + "Pitspeed Limit: " + getmPitSpeedLimit() + "\n"
+                + "Game Paused: " + getmGamePaused() + "\n"
+                + "Is Spectating: " + getmIsSpectating() + "\n"
+                + "Spectator Car Index: " + getmSpectatorCarIndex() + "\n"
+                + "SpliProNativeSupport: " + getmSpliProNativeSupport() + "\n"
+                + "Num Marshal Zones: " + getmNumMarshalZones() + "\n"
+                + "Marshal Zones: ( " + marshalZones.toString() + " )\n"
+                + "Safety Car Status: " + getmSafetyCarStatus() + "\n"
+                + "Network Game: " + getmNetworkGame() + "\n"
+                + "Num Weather Forecast Samples: " + getmNumWeatherForecastSamples() + "\n"
+                + "Weather Forecast Samples: ( " + weatherForecastSamples.toString() + " )\n"
+                + "Forecast Accuracy: " + getmForecastAccuracy() + "\n"
+                + "AI Difficulty: " + getmAiDifficulty() + "\n"
+                + "Season Link Identifier: " + getmSeasonLinkIdentifier() + "\n"
+                + "Weekend Link Identifier: " + getmWeekendLinkIdentifier() + "\n"
+                + "Session Link Identifier: " + getmSessionLinkIdentifier() + "\n"
+                + "Pit Stop Window Ideal Lap: " + getmPitStopWindowIdealLap() + "\n"
+                + "Pit Stop Window Lastest Lap: " + getmPitStopWindowLatestLap() + "\n"
+                + "Pit Stop Rejoin Position: " + getmPitStopRejoinPosition() + "\n"
+                + "Steering Assist: " + getmSteeringAssist() + "\n"
+                + "Breaking Assist: " + getmBreakingAssist() + "\n"
+                + "Gearbox Assist: " + getmGearboxAssist() + "\n"
+                + "Pit Assist: " + getmPitAssist() + "\n"
+                + "Pit Release Assist: " + getmPitreleaseAssist() + "\n"
+                + "ERS Assist: " + getmERSAssist() + "\n"
+                + "DRS Assist: " + getmDRSAssist() + "\n"
+                + "Dynamic Racing Line: " + getmDynamicRacingLine() + "\n"
+                + "Dynamic Racing Line Type: " + getmDynamicRacingLineType() + "\n";
     }
 }
