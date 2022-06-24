@@ -17,8 +17,8 @@ public abstract class TypeConverter {
         return result;
     }
 
-    public static void convertUint32(byte number)  {
-        //TODO this
+    public static long convertUint32(byte number)  {
+        return number;
     }
 
 }

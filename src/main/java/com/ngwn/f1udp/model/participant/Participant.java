@@ -1,4 +1,4 @@
-package com.ngwn.f1udp.model;
+package com.ngwn.f1udp.model.participant;
 
 import com.ngwn.f1udp.utils.TypeConverter;
 
