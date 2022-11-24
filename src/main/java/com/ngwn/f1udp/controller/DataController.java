@@ -11,8 +11,7 @@ public class DataController {
     public Receiver receiver;
 
     public DataController() {
-        receiver = new Receiver(this);
-        new Thread(receiver).start();
+        receiver = new Receiver();
 
         //TODO: remove. This is just for testing purposes.
         Set<Thread> threads = Thread.getAllStackTraces().keySet();
@@ -22,17 +21,11 @@ public class DataController {
         }
     }
 
-    public synchronized void handlePacket(byte[] packet) {
-        PacketModel packetModel = new PacketModel(packet);
-        System.out.println("check");
+    public void startReceiver(){
+        new Thread(receiver).start();
+    }
 
-        if(packetModel != null) {
-            switch (packetModel.getmPacketId()) {
-                case 4:
-                    ParticipantPacketModel participantPacketModel = new ParticipantPacketModel(packet);
-                    System.out.println(participantPacketModel.toString());
-                    break;
-            }
-        }
+    public void shutDown() {
+        receiver.shutDown();
     }
 }
