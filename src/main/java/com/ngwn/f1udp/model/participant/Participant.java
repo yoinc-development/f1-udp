@@ -45,9 +45,7 @@ public class Participant {
     private String computeName(ByteBuffer superBuffer) {
         byte[] stringByte = new byte[NAME_BYTE_LENGTH];
 
-        for (int i = 0; i < NAME_BYTE_LENGTH; i++) {
-            stringByte[i] = superBuffer.get();
-        }
+        superBuffer.get(stringByte);
 
         return new String(stringByte).trim();
     }

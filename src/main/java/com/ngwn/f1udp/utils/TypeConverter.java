@@ -12,10 +12,13 @@ public abstract class TypeConverter {
         return (short) (number & 0xffff);
     }
 
-    public static BigInteger convertUint64(long number)  {
-        BigInteger result = BigInteger.valueOf(number);
-        return result;
+    public static BigInteger convertUint64(byte[] byteArray)  {
+        byte[] rev = new byte[byteArray.length + 1];
+        for (int i = 0, j = byteArray.length; j > 0; i++, j--)
+            rev[j] = byteArray[i];
+        return new BigInteger(rev);
     }
+
 
     public static void convertUint32(byte number)  {
         //TODO this

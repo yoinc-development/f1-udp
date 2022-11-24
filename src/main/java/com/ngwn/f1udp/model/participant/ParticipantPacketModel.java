@@ -21,7 +21,7 @@ public class ParticipantPacketModel extends PacketModel {
         // mNumActiveCars
         mNumActiveCars = TypeConverter.convertUint8(superBuffer.get());
         // mParticipants[22]
-        for (int i = 0; i < PacketModel.NUMBER_OF_CARS; i++) {
+        for (int i = 0; i < NUMBER_OF_CARS; i++) {
             Participant participant = new Participant(superBuffer);
             participantList.add(participant);
             //Debug
