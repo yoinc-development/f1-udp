@@ -24,9 +24,10 @@ public class StartupController {
 
     @FXML
     protected void playerButtonClick() {
-
         controller = new DataController();
-
+        controller.startReceiver();
     }
+
+    //TODO: Add shutdown button
 
 }
