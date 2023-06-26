@@ -13,15 +13,14 @@ public abstract class TypeConverter {
     }
 
     public static BigInteger convertUint64(byte[] byteArray)  {
-        byte[] rev = new byte[byteArray.length + 1];
+        byte[] result = new byte[byteArray.length + 1];
         for (int i = 0, j = byteArray.length; j > 0; i++, j--)
-            rev[j] = byteArray[i];
-        return new BigInteger(rev);
+            result[j] = byteArray[i];
+        return new BigInteger(result);
     }
 
 
     public static void convertUint32(byte number)  {
         //TODO this
     }
-
 }

@@ -1,5 +1,6 @@
 package com.ngwn.f1udp.model;
 
+import com.ngwn.f1udp.utils.ByteBufferReader;
 import com.ngwn.f1udp.utils.TypeConverter;
 
 import java.math.BigInteger;
@@ -33,7 +34,7 @@ public class PacketModel {
         mGameMinorVersion = TypeConverter.convertUint8(byteBuffer.get());
         mPacketVersion = TypeConverter.convertUint8(byteBuffer.get());
         mPacketId = TypeConverter.convertUint8(byteBuffer.get());
-        mSessionUID = readUint64(byteBuffer);
+        mSessionUID = ByteBufferReader.readUint64(byteBuffer);
         mSessionTime = byteBuffer.getFloat();
         mFrameIdentifier = byteBuffer.getInt();
         mPlayerCarIndex = TypeConverter.convertUint8(byteBuffer.get());
@@ -134,18 +135,5 @@ public class PacketModel {
         return "PacketFormat: " + getmPacketFormat() + "\n"
                 + "SessionUId: " + getmSessionUID() + "\n"
                 + "PacketId: " + getmPacketId() + "\n";
-    }
-
-    /**
-     * Reads the next eight bytes at the buffer's current position,
-     * composing them into a {@link BigInteger} value according to the little endian byte order,
-     * and then increments the position by eight.
-     * @param byteBuffer ByteBuffer - which is at the correct position
-     * @return The BigInteger converted from the eight bytes
-     */
-    protected BigInteger readUint64(ByteBuffer byteBuffer) {
-        byte[] byteArray = new byte[8];
-        byteBuffer.get(byteArray);
-        return TypeConverter.convertUint64(byteArray);
     }
 }

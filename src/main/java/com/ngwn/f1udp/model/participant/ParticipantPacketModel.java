@@ -24,8 +24,6 @@ public class ParticipantPacketModel extends PacketModel {
         for (int i = 0; i < NUMBER_OF_CARS; i++) {
             Participant participant = new Participant(superBuffer);
             participantList.add(participant);
-            //Debug
-            //System.out.println(participant);
         }
     }
 
@@ -34,7 +32,8 @@ public class ParticipantPacketModel extends PacketModel {
         StringBuilder result = new StringBuilder();
         for (Participant participant : participantList) {
             result.append(participant.toString());
-            result.append("\n");
+            result.append(System.lineSeparator());
+
         }
         return result.toString();
     }
