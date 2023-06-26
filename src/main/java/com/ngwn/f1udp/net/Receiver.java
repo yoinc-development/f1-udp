@@ -1,8 +1,9 @@
 package com.ngwn.f1udp.net;
 
-import com.ngwn.f1udp.controller.DataController;
 import com.ngwn.f1udp.model.PacketModel;
-import com.ngwn.f1udp.model.ParticipantPacketModel;
+import com.ngwn.f1udp.model.lapdata.LapDataCollectionMode;
+import com.ngwn.f1udp.model.participant.ParticipantPacketModel;
+import com.ngwn.f1udp.model.session.SessionDataModel;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -50,16 +51,16 @@ public class Receiver implements Runnable {
 
         switch (packetModel.getmPacketId()) {
             case 1:
-                System.out.println("Packet 1: Not implemented.");
+                SessionDataModel sessionDataModel = new SessionDataModel(packet);
+                System.out.println(sessionDataModel.toString());
                 break;
             case 2:
-                System.out.println("Packet 2: Not implemented.");
-                break;
-            case 3:
-                System.out.println("Packet 3: Not implemented.");
-                break;
+                LapDataCollectionMode lapDataModel = new LapDataCollectionMode(packet);
+                System.out.println(lapDataModel.toString());
+
             case 4:
-                System.out.println("Packet 4: Not implemented.");
+                ParticipantPacketModel participantPacketModel = new ParticipantPacketModel(packet);
+                System.out.println(participantPacketModel.toString());
                 break;
             case 5:
                 System.out.println("Packet 5: Not implemented.");

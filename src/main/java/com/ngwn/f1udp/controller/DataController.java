@@ -1,8 +1,5 @@
 package com.ngwn.f1udp.controller;
 
-import com.ngwn.f1udp.model.PacketModel;
-import com.ngwn.f1udp.model.participant.ParticipantPacketModel;
-import com.ngwn.f1udp.model.session.SessionDataModel;
 import com.ngwn.f1udp.net.Receiver;
 
 import java.util.Set;
