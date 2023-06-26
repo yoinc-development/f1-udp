@@ -1,7 +1,6 @@
 package com.ngwn.f1udp.controller;
 
 import com.ngwn.f1udp.model.PacketModel;
-import com.ngwn.f1udp.model.lapdata.LapDataCollectionMode;
 import com.ngwn.f1udp.model.participant.ParticipantPacketModel;
 import com.ngwn.f1udp.model.session.SessionDataModel;
 import com.ngwn.f1udp.net.Receiver;
@@ -13,8 +12,7 @@ public class DataController {
     public Receiver receiver;
 
     public DataController() {
-        receiver = new Receiver(this);
-        new Thread(receiver).start();
+        receiver = new Receiver();
 
         //TODO: remove. This is just for testing purposes.
         Set<Thread> threads = Thread.getAllStackTraces().keySet();
@@ -24,24 +22,11 @@ public class DataController {
         }
     }
 
-    public synchronized void handlePacket(byte[] packet) {
-        PacketModel packetModel = new PacketModel(packet);
+    public void startReceiver(){
+        new Thread(receiver).start();
+    }
 
-        if(packetModel != null) {
-            switch (packetModel.getmPacketId()) {
-                case 1:
-                    SessionDataModel sessionDataModel = new SessionDataModel(packet);
-                    System.out.println(sessionDataModel.toString());
-                    break;
-                case 2:
-                    LapDataCollectionMode lapDataModel = new LapDataCollectionMode(packet);
-                    System.out.println(lapDataModel.toString());
-
-                case 4:
-                    ParticipantPacketModel participantPacketModel = new ParticipantPacketModel(packet);
-                    System.out.println(participantPacketModel.toString());
-                    break;
-            }
-        }
+    public void shutDown() {
+        receiver.shutDown();
     }
 }
