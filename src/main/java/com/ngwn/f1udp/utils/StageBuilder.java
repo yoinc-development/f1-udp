@@ -14,10 +14,10 @@ public abstract class StageBuilder {
     private static FXMLLoader fxmlLoader = null;
     private static Scene scene = null;
 
-    public static Stage buildStageFromButton(String windowName, String ressource, int v, int v1, ActionEvent event) throws IOException {
+    public static Stage buildStageFromButton(String windowName, String resource, int v, int v1, ActionEvent event) throws IOException {
         Stage resultStage = ((Stage) ((Button) event.getTarget()).getScene().getWindow());
 
-        fxmlLoader = new FXMLLoader(Startup.class.getResource(ressource));
+        fxmlLoader = new FXMLLoader(Startup.class.getResource(resource));
         scene = new Scene(fxmlLoader.load(), v, v1);
 
         resultStage.setTitle(windowName);
@@ -27,9 +27,9 @@ public abstract class StageBuilder {
         return resultStage;
     }
 
-    public static Stage buildStage(String windowName, String ressource, int v, int v1, Stage stage) throws IOException {
+    public static Stage buildStage(String windowName, String resource, int v, int v1, Stage stage) throws IOException {
 
-        fxmlLoader = new FXMLLoader(Startup.class.getResource(ressource));
+        fxmlLoader = new FXMLLoader(Startup.class.getResource(resource));
         scene = new Scene(fxmlLoader.load(), v, v1);
 
         stage.setTitle(windowName);

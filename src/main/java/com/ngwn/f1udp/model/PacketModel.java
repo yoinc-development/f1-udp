@@ -1,5 +1,6 @@
 package com.ngwn.f1udp.model;
 
+import com.ngwn.f1udp.utils.ByteBufferReader;
 import com.ngwn.f1udp.utils.TypeConverter;
 
 import java.math.BigInteger;
@@ -10,6 +11,7 @@ public class PacketModel {
 
     public static int HEADER_SIZE = 21;
     public static int PACKET_FORMAT = 2018;
+    public static int NUMBER_OF_CARS = 22;
 
     private ByteBuffer byteBuffer;
     private int mPacketFormat;
@@ -32,7 +34,7 @@ public class PacketModel {
         mGameMinorVersion = TypeConverter.convertUint8(byteBuffer.get());
         mPacketVersion = TypeConverter.convertUint8(byteBuffer.get());
         mPacketId = TypeConverter.convertUint8(byteBuffer.get());
-        mSessionUID = TypeConverter.convertUint64(byteBuffer.getLong());
+        mSessionUID = ByteBufferReader.readUint64(byteBuffer);
         mSessionTime = byteBuffer.getFloat();
         mFrameIdentifier = byteBuffer.getInt();
         mPlayerCarIndex = TypeConverter.convertUint8(byteBuffer.get());

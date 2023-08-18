@@ -1,6 +1,5 @@
 package com.ngwn.f1udp.model.session;
 
-import com.ngwn.f1udp.model.participant.Participant;
 import com.ngwn.f1udp.utils.TypeConverter;
 
 import java.nio.ByteBuffer;

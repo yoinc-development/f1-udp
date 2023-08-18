@@ -21,12 +21,21 @@ public class ParticipantPacketModel extends PacketModel {
         // mNumActiveCars
         mNumActiveCars = TypeConverter.convertUint8(superBuffer.get());
         // mParticipants[22]
-        for (int i = 0; i < 22; i++) {
+        for (int i = 0; i < NUMBER_OF_CARS; i++) {
             Participant participant = new Participant(superBuffer);
             participantList.add(participant);
-            //Debug
-            //System.out.println(participant);
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        for (Participant participant : participantList) {
+            result.append(participant.toString());
+            result.append(System.lineSeparator());
+
+        }
+        return result.toString();
     }
 
 
