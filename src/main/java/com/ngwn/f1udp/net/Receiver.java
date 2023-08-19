@@ -1,23 +1,24 @@
 package com.ngwn.f1udp.net;
 
 import com.ngwn.f1udp.model.PacketModel;
-import com.ngwn.f1udp.model.lapdata.LapDataCollectionMode;
-import com.ngwn.f1udp.model.participant.ParticipantPacketModel;
-import com.ngwn.f1udp.model.session.SessionDataModel;
+import com.ngwn.f1udp.utils.PacketDataCollection;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.nio.ByteBuffer;
 
 public class Receiver implements Runnable {
 
-    private int port = 4445;
-    private static int MAX_BUFFER = 2048;
+    private final int port = 4445;
+    private static final int MAX_BUFFER = 2048;
     private boolean is_running;
     DatagramSocket socket = null;
+    PacketDataCollection packetDataCollection;
 
     public Receiver() {
         this.is_running = true;
+        this.packetDataCollection = new PacketDataCollection();
         try {
             this.socket = new DatagramSocket(port);
         } catch (IOException ex) {
@@ -47,20 +48,21 @@ public class Receiver implements Runnable {
     }
 
     private synchronized void handlePacket(byte[] packet) {
-        PacketModel packetModel = new PacketModel(packet);
+        PacketModel packetModel = new PacketModel();
+        ByteBuffer superBuffer = packetModel.readData(packet);
 
         switch (packetModel.getmPacketId()) {
             case 1:
-                SessionDataModel sessionDataModel = new SessionDataModel(packet);
-                System.out.println(sessionDataModel.toString());
+                packetDataCollection.updateSessionData(superBuffer);
+                System.out.println(packetDataCollection.getSessionDataModel().toString());
                 break;
             case 2:
-                LapDataCollectionMode lapDataModel = new LapDataCollectionMode(packet);
-                System.out.println(lapDataModel.toString());
-
+                packetDataCollection.updateLapDataCollection(superBuffer);
+                System.out.println(packetDataCollection.getLapDataCollectionModel().toString());
+                break;
             case 4:
-                ParticipantPacketModel participantPacketModel = new ParticipantPacketModel(packet);
-                System.out.println(participantPacketModel.toString());
+                packetDataCollection.updateParticipantCollection(superBuffer);
+                System.out.println(packetDataCollection.getParticipantCollectionModel().toString());
                 break;
             case 5:
                 System.out.println("Packet 5: Not implemented.");

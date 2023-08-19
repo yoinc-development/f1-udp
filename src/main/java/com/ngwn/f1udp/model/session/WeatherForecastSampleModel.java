@@ -30,6 +30,20 @@ public class WeatherForecastSampleModel {
         mRainPercentage = TypeConverter.convertUint8(superBuffer.get());
     }
 
+    public WeatherForecastSampleModel() { }
+
+    public ByteBuffer readData(ByteBuffer superBuffer) {
+        mSessionType = TypeConverter.convertUint8(superBuffer.get());
+        mTimeOffset = TypeConverter.convertUint8(superBuffer.get());
+        mWeather = TypeConverter.convertUint8(superBuffer.get());
+        mTrackTemperature = TypeConverter.convertUint8(superBuffer.get());
+        mTrackTemperatureChange = TypeConverter.convertUint8(superBuffer.get());
+        mAirTemperature = TypeConverter.convertUint8(superBuffer.get());
+        mAirTemperatureChange = TypeConverter.convertUint8(superBuffer.get());
+        mRainPercentage = TypeConverter.convertUint8(superBuffer.get());
+        return superBuffer;
+    }
+
     public int getmSessionType() {
         return mSessionType;
     }

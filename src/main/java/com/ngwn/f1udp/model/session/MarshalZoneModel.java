@@ -18,6 +18,14 @@ public class MarshalZoneModel {
         mZoneFlag = TypeConverter.convertUint8(superBuffer.get());
     }
 
+    public MarshalZoneModel() { }
+
+    public ByteBuffer readData(ByteBuffer superBuffer) {
+        mZoneStart = superBuffer.getFloat();
+        mZoneFlag = TypeConverter.convertUint8(superBuffer.get());
+        return superBuffer;
+    }
+
     public float getmZoneStart() {
         return mZoneStart;
     }

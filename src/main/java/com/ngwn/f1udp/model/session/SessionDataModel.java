@@ -113,6 +113,62 @@ public class SessionDataModel extends PacketModel {
 
     }
 
+    public SessionDataModel() { }
+
+    public ByteBuffer readData(ByteBuffer byteBuffer) {
+        mWeather = TypeConverter.convertUint8(byteBuffer.get());
+        mTrackTemperature = TypeConverter.convertUint8(byteBuffer.get());
+        mAirTemperature = TypeConverter.convertUint8(byteBuffer.get());
+        mTotalLaps = TypeConverter.convertUint8(byteBuffer.get());
+        mTrackLength = TypeConverter.convertUint8(byteBuffer.get());
+        mSessionType = TypeConverter.convertUint8(byteBuffer.get());
+
+        mTrackId = TypeConverter.convertUint8(byteBuffer.get());
+        mFormula = TypeConverter.convertUint8(byteBuffer.get());
+
+        mSessionTimeLeft = TypeConverter.convertUint16(byteBuffer.getShort());
+        mSessionDuration = TypeConverter.convertUint16(byteBuffer.getShort());
+        mPitSpeedLimit = TypeConverter.convertUint8(byteBuffer.get());
+        mGamePaused = TypeConverter.convertUint8(byteBuffer.get());
+        mIsSpectating = TypeConverter.convertUint8(byteBuffer.get());
+        mSpectatorCarIndex = TypeConverter.convertUint8(byteBuffer.get());
+        mSliProNativeSupport = TypeConverter.convertUint8(byteBuffer.get());
+        mNumMarshalZones = TypeConverter.convertUint8(byteBuffer.get());
+        for(int counter = 0; counter < getmNumMarshalZones(); counter++) {
+            MarshalZoneModel marshalZoneModel = new MarshalZoneModel(byteBuffer);
+            mMarshalZones.add(marshalZoneModel);
+        }
+        mSafetyCarStatus = TypeConverter.convertUint8(byteBuffer.get());
+
+        mNetworkGame = TypeConverter.convertUint8(byteBuffer.get());
+        mNumWeatherForecastSamples = TypeConverter.convertUint8(byteBuffer.get());
+        for(int counter = 0; counter < getmNumWeatherForecastSamples(); counter++) {
+            WeatherForecastSampleModel weatherForecastSampleModel = new WeatherForecastSampleModel(byteBuffer);
+            mWeatherForecastSamples.add(weatherForecastSampleModel);
+        }
+        mForecastAccuracy = TypeConverter.convertUint8(byteBuffer.get());
+        mAiDifficulty = TypeConverter.convertUint8(byteBuffer.get());
+
+        mSeasonLinkIdentifier = TypeConverter.convertUint32(byteBuffer.get());
+        mWeekendLinkIdentifier = TypeConverter.convertUint32(byteBuffer.get());
+        mSessionLinkIdentifier = TypeConverter.convertUint32(byteBuffer.get());
+
+        mPitStopWindowIdealLap = TypeConverter.convertUint8(byteBuffer.get());
+        mPitStopWindowLatestLap = TypeConverter.convertUint8(byteBuffer.get());
+        mPitStopRejoinPosition = TypeConverter.convertUint8(byteBuffer.get());
+        mSteeringAssist = TypeConverter.convertUint8(byteBuffer.get());
+        mBreakingAssist = TypeConverter.convertUint8(byteBuffer.get());
+        mGearboxAssist = TypeConverter.convertUint8(byteBuffer.get());
+        mPitAssist = TypeConverter.convertUint8(byteBuffer.get());
+        mPitreleaseAssist = TypeConverter.convertUint8(byteBuffer.get());
+        mERSAssist = TypeConverter.convertUint8(byteBuffer.get());
+        mDRSAssist = TypeConverter.convertUint8(byteBuffer.get());
+        mDynamicRacingLine = TypeConverter.convertUint8(byteBuffer.get());
+        mDynamicRacingLineType = TypeConverter.convertUint8(byteBuffer.get());
+
+        return byteBuffer;
+    }
+
     public int getmWeather() {
         return mWeather;
     }

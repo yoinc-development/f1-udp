@@ -6,17 +6,27 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LapDataCollectionMode extends PacketModel {
+public class LapDataCollectionModel extends PacketModel {
 
     private List<LapDataModel> lapDataList;
 
-    public LapDataCollectionMode(byte[] packet) {
+    public LapDataCollectionModel(byte[] packet) {
         super(packet);
         lapDataList = new ArrayList<>();
         ByteBuffer superBuffer = super.getByteBuffer();
         for (int index = 0; index < PacketModel.NUMBER_OF_CARS; index++) {
             lapDataList.add(new LapDataModel(superBuffer));
         }
+    }
+
+    public LapDataCollectionModel() { }
+
+    public ByteBuffer readData(ByteBuffer superBuffer) {
+        lapDataList = new ArrayList<>();
+        for (int index = 0; index < PacketModel.NUMBER_OF_CARS; index++) {
+            lapDataList.add(new LapDataModel(superBuffer));
+        }
+        return superBuffer;
     }
 
     @Override

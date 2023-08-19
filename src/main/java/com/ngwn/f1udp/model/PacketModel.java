@@ -39,7 +39,26 @@ public class PacketModel {
         mFrameIdentifier = byteBuffer.getInt();
         mPlayerCarIndex = TypeConverter.convertUint8(byteBuffer.get());
         mSecondaryCarIndex = TypeConverter.convertUint8(byteBuffer.get());
+    }
 
+    public PacketModel() { }
+
+    public ByteBuffer readData(byte[] packet) {
+        byteBuffer = ByteBuffer.wrap(packet);
+        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+
+        mPacketFormat = TypeConverter.convertUint16(byteBuffer.getShort());
+        mGameMajorVersion = TypeConverter.convertUint8(byteBuffer.get());
+        mGameMinorVersion = TypeConverter.convertUint8(byteBuffer.get());
+        mPacketVersion = TypeConverter.convertUint8(byteBuffer.get());
+        mPacketId = TypeConverter.convertUint8(byteBuffer.get());
+        mSessionUID = ByteBufferReader.readUint64(byteBuffer);
+        mSessionTime = byteBuffer.getFloat();
+        mFrameIdentifier = byteBuffer.getInt();
+        mPlayerCarIndex = TypeConverter.convertUint8(byteBuffer.get());
+        mSecondaryCarIndex = TypeConverter.convertUint8(byteBuffer.get());
+
+        return byteBuffer;
     }
 
     public int getmPacketFormat() {
