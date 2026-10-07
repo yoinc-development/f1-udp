@@ -1,5 +1,12 @@
 # Default ignored files
 .idea
+node_modules
+docs
+
+# Electron build output
+out/
+release/
+*.tsbuildinfo
 
 # Maven
 target/

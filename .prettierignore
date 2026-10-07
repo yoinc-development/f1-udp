@@ -1,0 +1,11 @@
+node_modules
+out
+release
+target
+src/main/java
+src/main/resources
+package-lock.json
+pom.xml
+.idea
+*.md
+.github/ISSUE_TEMPLATE
