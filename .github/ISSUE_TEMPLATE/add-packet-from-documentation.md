@@ -22,7 +22,11 @@ assignees: ''
 ```
 
 **Schema:**
+```
 // add the schema in the codebase
+```
 
 **Additional Information:**
+```
 // add additional information
+```
