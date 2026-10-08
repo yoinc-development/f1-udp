@@ -21,7 +21,10 @@ describe('settings', () => {
     })
 
     it('merges a partial file over the defaults and ignores unknown keys', () => {
-        writeFileSync(join(directory, 'settings.json'), JSON.stringify({udpPort: 4445, other: true}))
+        writeFileSync(
+            join(directory, 'settings.json'),
+            JSON.stringify({udpPort: 4445, other: true})
+        )
         expect(loadSettings(directory)).toEqual({...DEFAULT_SETTINGS, udpPort: 4445})
     })
 

@@ -2,14 +2,10 @@
   "compilerOptions": {
     "composite": true,
     "target": "ES2022",
-    "lib": [
-      "ES2022"
-    ],
+    "lib": ["ES2022"],
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
@@ -19,9 +15,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "paths": {
-      "@shared/*": [
-        "./src/shared/*"
-      ]
+      "@shared/*": ["./src/shared/*"]
     }
   },
   "include": [

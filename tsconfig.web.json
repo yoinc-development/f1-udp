@@ -2,11 +2,7 @@
   "compilerOptions": {
     "composite": true,
     "target": "ES2022",
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "types": [],
@@ -18,14 +14,8 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
     "paths": {
-      "@shared/*": [
-        "./src/shared/*"
-      ]
+      "@shared/*": ["./src/shared/*"]
     }
   },
-  "include": [
-    "src/renderer/src/**/*.ts",
-    "src/renderer/src/**/*.tsx",
-    "src/shared/**/*.ts"
-  ]
+  "include": ["src/renderer/src/**/*.ts", "src/renderer/src/**/*.tsx", "src/shared/**/*.ts"]
 }
