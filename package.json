@@ -4,6 +4,9 @@
   "description": "Automated stream director for F1 telemetry",
   "private": true,
   "main": "./out/main/index.js",
+  "engines": {
+    "node": ">=24"
+  },
   "author": "yoinc-development",
   "license": "SEE LICENSE IN LICENSE",
   "scripts": {
