@@ -21,8 +21,8 @@ assignees: ''
 // copy&paste the official packet header of the sent data in here
 ```
 
-**Structure:**
-// add the structure in the codebase
+**Schema:**
+// add the schema in the codebase
 
 **Additional Information:**
 // add additional information

@@ -1,0 +1,14 @@
+# Default ignored files
+.idea
+node_modules
+docs
+
+# Electron build output
+out/
+release/
+*.tsbuildinfo
+
+# Package Files
+*.zip
+*.tar.gz
+*.rar
