@@ -57,4 +57,16 @@ describe('UdpReceiver', () => {
         receiver.stop()
         expect(receiver.status.state).toBe('stopped')
     })
+
+    it('keeps the stop reason until the next start', async () => {
+        const receiver = create()
+        await receiver.start(0)
+
+        receiver.stop('wrong game version')
+        expect(receiver.status.state).toBe('stopped')
+        expect(receiver.status.reason).toBe('wrong game version')
+
+        const status = await receiver.start(0)
+        expect(status.reason).toBeUndefined()
+    })
 })

@@ -5,6 +5,7 @@ const RATE_WINDOW_MS = 1000
 
 interface Group {
     packetFormat: number | null
+    packetId: number | null
     size: number
     count: number
     lastReceivedAt: number
@@ -33,13 +34,14 @@ export class PacketStatistics {
         return this.total
     }
 
-    record(buffer: Buffer, now: number): void {
+    record(buffer: Buffer, now: number, packetId: number | null = null): void {
         const packetFormat = buffer.length >= 2 ? buffer.readUInt16LE(0) : null
-        const key = `${packetFormat}:${buffer.length}`
+        const key = `${packetFormat}:${packetId}:${buffer.length}`
         let group = this.groups.get(key)
         if (!group) {
             group = {
                 packetFormat,
+                packetId,
                 size: buffer.length,
                 count: 0,
                 lastReceivedAt: now,
@@ -62,6 +64,7 @@ export class PacketStatistics {
             prune(group, now)
             result.push({
                 packetFormat: group.packetFormat,
+                packetId: group.packetId,
                 size: group.size,
                 count: group.count,
                 perSecond: group.recent.length,

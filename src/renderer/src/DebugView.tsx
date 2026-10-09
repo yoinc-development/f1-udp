@@ -1,5 +1,7 @@
 import {useEffect, useState} from 'react'
+import {DEFAULT_SETTINGS, GAME_VERSIONS, type GameVersion} from '@shared/settings'
 import type {UdpSnapshot} from '@shared/udp'
+import RecentPanel from './RecentPanel'
 
 const cell = {padding: '0.25rem 0.75rem', textAlign: 'left', whiteSpace: 'nowrap'} as const
 
@@ -10,32 +12,43 @@ function formatAge(lastReceivedAt: number, now: number): string {
 export default function DebugView() {
     const [snapshot, setSnapshot] = useState<UdpSnapshot | null>(null)
     const [portInput, setPortInput] = useState('')
+    const [version, setVersion] = useState<GameVersion>(DEFAULT_SETTINGS.gameVersion)
     const [now, setNow] = useState(() => Date.now())
 
     useEffect(() => {
         void window.api.udp.snapshot().then(setSnapshot)
-        void window.api.settings.get().then((settings) => setPortInput(String(settings.udpPort)))
+        void window.api.settings.get().then((settings) => {
+            setPortInput(String(settings.udpPort))
+            setVersion(settings.gameVersion)
+        })
         return window.api.udp.onSnapshot((next) => {
             setSnapshot(next)
             setNow(Date.now())
         })
     }, [])
 
-    const applyPort = (): void => {
-        void window.api.settings.set({udpPort: Number(portInput)}).then((settings) => {
+    const start = (): void => {
+        void window.api.udp.start(Number(portInput), version).then((settings) => {
             setPortInput(String(settings.udpPort))
+            setVersion(settings.gameVersion)
         })
+    }
+
+    const stop = (): void => {
+        void window.api.udp.stop()
     }
 
     if (!snapshot) return <p>loading...</p>
 
     const {status} = snapshot
+    const listening = status.state === 'listening'
 
     return (
         <section>
             <p>
                 {status.state === 'listening' && `Listening on UDP port ${status.port}`}
-                {status.state === 'stopped' && 'Receiver stopped'}
+                {status.state === 'stopped' &&
+                    (status.reason ? `Receiver stopped: ${status.reason}` : 'Receiver stopped')}
                 {status.state === 'error' &&
                     `Receiver error on port ${status.port}: ${status.error}`}
                 {' | '}
@@ -49,15 +62,36 @@ export default function DebugView() {
                         min={1}
                         max={65535}
                         value={portInput}
+                        disabled={listening}
                         onChange={(event) => setPortInput(event.target.value)}
                     />
                 </label>{' '}
-                <button onClick={applyPort}>Apply</button>
+                <label>
+                    Game{' '}
+                    <select
+                        value={version}
+                        disabled={listening}
+                        onChange={(event) => setVersion(event.target.value as GameVersion)}
+                    >
+                        {GAME_VERSIONS.map((gameVersion) => (
+                            <option key={gameVersion} value={gameVersion}>
+                                {gameVersion}
+                            </option>
+                        ))}
+                    </select>
+                </label>{' '}
+                <button onClick={start} disabled={listening}>
+                    Start
+                </button>{' '}
+                <button onClick={stop} disabled={!listening}>
+                    Stop
+                </button>
             </p>
             <table style={{borderCollapse: 'collapse', fontSize: '0.9rem'}}>
                 <thead>
                     <tr>
                         <th style={cell}>Format</th>
+                        <th style={cell}>Packet id</th>
                         <th style={cell}>Size</th>
                         <th style={cell}>Count</th>
                         <th style={cell}>Per second</th>
@@ -67,8 +101,9 @@ export default function DebugView() {
                 </thead>
                 <tbody>
                     {snapshot.packets.map((packet) => (
-                        <tr key={`${packet.packetFormat}:${packet.size}`}>
+                        <tr key={`${packet.packetFormat}:${packet.packetId}:${packet.size}`}>
                             <td style={cell}>{packet.packetFormat ?? 'too short'}</td>
+                            <td style={cell}>{packet.packetId ?? '-'}</td>
                             <td style={cell}>{packet.size}</td>
                             <td style={cell}>{packet.count}</td>
                             <td style={cell}>{packet.perSecond}</td>
@@ -79,6 +114,7 @@ export default function DebugView() {
                 </tbody>
             </table>
             {snapshot.packets.length === 0 && <p>No packets received yet.</p>}
+            <RecentPanel recent={snapshot.recent} />
         </section>
     )
 }

@@ -46,4 +46,8 @@ describe('settings', () => {
         expect(saved).toEqual({...DEFAULT_SETTINGS, gameVersion: 'f1-2021'})
         expect(loadSettings(directory)).toEqual(saved)
     })
+
+    it('accepts f1-26 as game version', () => {
+        expect(saveSettings(directory, {gameVersion: 'f1-26'}).gameVersion).toBe('f1-26')
+    })
 })

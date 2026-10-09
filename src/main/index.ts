@@ -1,22 +1,70 @@
 import {join} from 'node:path'
 import {app, BrowserWindow, ipcMain, shell} from 'electron'
-import type {Settings} from '@shared/settings'
+import {DEFAULT_SETTINGS, type GameVersion, type Settings} from '@shared/settings'
 import type {UdpSnapshot} from '@shared/udp'
+import {decode} from './protocol/decoder'
+import type {StructValue} from './protocol/reader'
+import {VERSIONS} from './protocol/versions'
 import {loadSettings, saveSettings} from './settings'
 import {UdpReceiver} from './udp/receiver'
+import {RecentPackets} from './udp/recent'
 import {PacketStatistics} from './udp/stats'
+import {checkFormat} from './udp/version-guard'
 
 const SNAPSHOT_INTERVAL_MS = 500
 
 const receiver = new UdpReceiver()
 const statistics = new PacketStatistics()
+const recent = new RecentPackets()
+let activeVersion: GameVersion = DEFAULT_SETTINGS.gameVersion
 let snapshotTimer: NodeJS.Timeout | null = null
 
 function snapshot(): UdpSnapshot {
     return {
         status: receiver.status,
         totalPackets: statistics.totalPackets,
-        packets: statistics.snapshot(Date.now())
+        packets: statistics.snapshot(Date.now()),
+        recent: recent.snapshot()
+    }
+}
+
+function broadcastSnapshot(): void {
+    const current = snapshot()
+    for (const window of BrowserWindow.getAllWindows()) {
+        window.webContents.send('udp:snapshot', current)
+    }
+}
+
+function handlePacket(buffer: Buffer): void {
+    const version = VERSIONS[activeVersion]
+    const check = checkFormat(buffer, version.packetFormat)
+    if (check.result === 'ignored') return
+    if (check.result === 'mismatch') {
+        receiver.stop(
+            `Received packet format ${check.actual}, expected ${version.packetFormat} (${version.label})`
+        )
+        broadcastSnapshot()
+        return
+    }
+    const now = Date.now()
+    const header = readHeader(buffer)
+    const packetId = header ? Number(header.packetId) : null
+    statistics.record(buffer, now, packetId)
+    recent.record({
+        receivedAt: now,
+        packetFormat: version.packetFormat,
+        packetId,
+        size: buffer.length,
+        sessionTime: header ? Number(header.sessionTime) : null,
+        frameIdentifier: header ? Number(header.frameIdentifier) : null
+    })
+}
+
+function readHeader(buffer: Buffer): StructValue | null {
+    try {
+        return decode(buffer, activeVersion).header
+    } catch {
+        return null
     }
 }
 
@@ -52,26 +100,27 @@ app.whenReady().then(() => {
     const settingsDirectory = app.getPath('userData')
 
     ipcMain.handle('settings:get', () => loadSettings(settingsDirectory))
-    ipcMain.handle('settings:set', async (_event, partial: Partial<Settings>) => {
-        const previous = loadSettings(settingsDirectory)
-        const next = saveSettings(settingsDirectory, partial)
-        if (next.udpPort !== previous.udpPort) {
-            statistics.reset()
-            await receiver.start(next.udpPort)
-        }
+    ipcMain.handle('settings:set', (_event, partial: Partial<Settings>) =>
+        saveSettings(settingsDirectory, partial)
+    )
+    ipcMain.handle('udp:snapshot', () => snapshot())
+    ipcMain.handle('udp:start', async (_event, udpPort: number, gameVersion: GameVersion) => {
+        const next = saveSettings(settingsDirectory, {udpPort, gameVersion})
+        activeVersion = next.gameVersion
+        statistics.reset()
+        recent.reset()
+        await receiver.start(next.udpPort)
+        broadcastSnapshot()
         return next
     })
-    ipcMain.handle('udp:snapshot', () => snapshot())
+    ipcMain.handle('udp:stop', () => {
+        receiver.stop()
+        broadcastSnapshot()
+    })
 
-    receiver.onPacket((buffer) => statistics.record(buffer, Date.now()))
-    void receiver.start(loadSettings(settingsDirectory).udpPort)
+    receiver.onPacket(handlePacket)
 
-    snapshotTimer = setInterval(() => {
-        const current = snapshot()
-        for (const window of BrowserWindow.getAllWindows()) {
-            window.webContents.send('udp:snapshot', current)
-        }
-    }, SNAPSHOT_INTERVAL_MS)
+    snapshotTimer = setInterval(broadcastSnapshot, SNAPSHOT_INTERVAL_MS)
 
     createWindow()
 
