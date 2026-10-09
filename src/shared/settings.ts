@@ -1,4 +1,4 @@
-export const GAME_VERSIONS = ['f1-25', 'f1-2021'] as const
+export const GAME_VERSIONS = ['f1-25', 'f1-26', 'f1-2021'] as const
 
 export type GameVersion = (typeof GAME_VERSIONS)[number]
 

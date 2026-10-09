@@ -48,9 +48,10 @@ export class UdpReceiver {
         })
     }
 
-    stop(): void {
+    stop(reason?: string): void {
         this.close()
         this.current = {state: 'stopped', port: this.current.port}
+        if (reason) this.current.reason = reason
     }
 
     private close(): void {
