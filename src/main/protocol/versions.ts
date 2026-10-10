@@ -40,7 +40,7 @@ export const VERSIONS: Readonly<Record<GameVersion, VersionDefinition>> = {
             7: PacketCarStatusData25,
             8: PacketFinalClassificationData25,
             9: PacketLobbyInfoData25,
-            10: PacketCarDamageData25
+            10: PacketCarDamageData25,
             11: PacketSessionHistoryData25
         }
     },
