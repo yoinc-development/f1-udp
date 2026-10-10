@@ -29,11 +29,16 @@ export interface StructField {
     readonly schema: StructSchema
 }
 
-export interface ArrayField {
-    readonly name: string
+export type ArrayElement = ScalarType | StructSchema | NestedArray
+
+export interface NestedArray {
     readonly type: 'array'
     readonly length: number
-    readonly of: ScalarType | StructSchema
+    readonly of: ArrayElement
+}
+
+export interface ArrayField extends NestedArray {
+    readonly name: string
 }
 
 export interface UnionField {
@@ -47,8 +52,9 @@ export type FieldDefinition = ScalarField | StringField | StructField | ArrayFie
 
 export type StructSchema = readonly FieldDefinition[]
 
-function elementSize(of: ScalarType | StructSchema): number {
-    return typeof of === 'string' ? FIELD_SIZES[of] : sizeOf(of)
+function elementSize(of: ArrayElement): number {
+    if (typeof of === 'string') return FIELD_SIZES[of]
+    return 'of' in of ? of.length * elementSize(of.of) : sizeOf(of)
 }
 
 function fieldSize(field: FieldDefinition): number {

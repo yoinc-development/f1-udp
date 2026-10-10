@@ -64,6 +64,20 @@ describe('readStruct', () => {
         })
     })
 
+    it('reads arrays of arrays', () => {
+        const schema = [
+            {name: 'grid', type: 'array', length: 2, of: {type: 'array', length: 3, of: 'uint8'}}
+        ] as const satisfies StructSchema
+
+        expect(sizeOf(schema)).toBe(6)
+        expect(readStruct(schema, Buffer.from([1, 2, 3, 4, 5, 6])).value).toEqual({
+            grid: [
+                [1, 2, 3],
+                [4, 5, 6]
+            ]
+        })
+    })
+
     it('reads nested structs', () => {
         const inner = [{name: 'x', type: 'uint16'}] as const satisfies StructSchema
         const schema = [

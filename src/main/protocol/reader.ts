@@ -1,9 +1,14 @@
-import {FIELD_SIZES, sizeOf, type ScalarType, type StructSchema} from './schema'
+import {FIELD_SIZES, sizeOf, type NestedArray, type ScalarType, type StructSchema} from './schema'
 
 export type FieldValue = number | bigint | string | StructValue | FieldValue[]
 
 export interface StructValue {
     [name: string]: FieldValue
+}
+
+interface ArrayResult {
+    items: FieldValue[]
+    offset: number
 }
 
 export interface ReadResult {
@@ -40,6 +45,26 @@ function readString(buffer: Buffer, offset: number, length: number): string {
     return bytes.toString('utf8', 0, end === -1 ? length : end)
 }
 
+function readArray(array: NestedArray, buffer: Buffer, offset: number): ArrayResult {
+    const items: FieldValue[] = []
+    let position = offset
+    for (let index = 0; index < array.length; index++) {
+        if (typeof array.of === 'string') {
+            items.push(readScalar(array.of, buffer, position))
+            position += FIELD_SIZES[array.of]
+        } else if ('of' in array.of) {
+            const nested = readArray(array.of, buffer, position)
+            items.push(nested.items)
+            position = nested.offset
+        } else {
+            const nested = readStruct(array.of, buffer, position)
+            items.push(nested.value)
+            position = nested.offset
+        }
+    }
+    return {items, offset: position}
+}
+
 export function readStruct(schema: StructSchema, buffer: Buffer, offset = 0): ReadResult {
     const required = sizeOf(schema)
     if (buffer.length - offset < required) {
@@ -68,18 +93,9 @@ export function readStruct(schema: StructSchema, buffer: Buffer, offset = 0): Re
                 break
             }
             case 'array': {
-                const items: FieldValue[] = []
-                for (let index = 0; index < field.length; index++) {
-                    if (typeof field.of === 'string') {
-                        items.push(readScalar(field.of, buffer, position))
-                        position += FIELD_SIZES[field.of]
-                    } else {
-                        const nested = readStruct(field.of, buffer, position)
-                        items.push(nested.value)
-                        position = nested.offset
-                    }
-                }
-                value[field.name] = items
+                const nested = readArray(field, buffer, position)
+                value[field.name] = nested.items
+                position = nested.offset
                 break
             }
             default:
