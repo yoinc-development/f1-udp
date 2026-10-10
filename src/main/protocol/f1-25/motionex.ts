@@ -1,0 +1,32 @@
+import type {StructSchema} from '../schema'
+
+export const PacketMotionExData = [
+    {name: 'suspensionPosition', type: 'array', length: 4, of: 'float'},
+    {name: 'suspensionVelocity', type: 'array', length: 4, of: 'float'},
+    {name: 'suspensionAcceleration', type: 'array', length: 4, of: 'float'},
+    {name: 'wheelSpeed', type: 'array', length: 4, of: 'float'},
+    {name: 'wheelSlipRatio', type: 'array', length: 4, of: 'float'},
+    {name: 'wheelSlipAngle', type: 'array', length: 4, of: 'float'},
+    {name: 'wheelLatForce', type: 'array', length: 4, of: 'float'},
+    {name: 'wheelLongForce', type: 'array', length: 4, of: 'float'},
+    {name: 'heightOfCOGAboveGround', type: 'float'},
+    {name: 'localVelocityX', type: 'float'},
+    {name: 'localVelocityY', type: 'float'},
+    {name: 'localVelocityZ', type: 'float'},
+    {name: 'angularVelocityX', type: 'float'},
+    {name: 'angularVelocityY', type: 'float'},
+    {name: 'angularVelocityZ', type: 'float'},
+    {name: 'angularAccelerationX', type: 'float'},
+    {name: 'angularAccelerationY', type: 'float'},
+    {name: 'angularAccelerationZ', type: 'float'},
+    {name: 'frontWheelsAngle', type: 'float'},
+    {name: 'wheelVertForce', type: 'array', length: 4, of: 'float'},
+    {name: 'frontAeroHeight', type: 'float'},
+    {name: 'rearAeroHeight', type: 'float'},
+    {name: 'frontRollAngle', type: 'float'},
+    {name: 'rearRollAngle', type: 'float'},
+    {name: 'chassisYaw', type: 'float'},
+    {name: 'chassisPitch', type: 'float'},
+    {name: 'wheelCamber', type: 'array', length: 4, of: 'float'},
+    {name: 'wheelCamberGain', type: 'array', length: 4, of: 'float'}
+] as const satisfies StructSchema
