@@ -9,6 +9,8 @@ import {PacketFinalClassificationData as PacketFinalClassificationData25} from '
 import {PacketLobbyInfoData as PacketLobbyInfoData25} from './f1-25/lobbyinfo'
 import {PacketCarDamageData as PacketCarDamageData25} from './f1-25/cardamage'
 import {PacketSessionHistoryData as PacketSessionHistoryData25} from './f1-25/sessionhistory'
+import {PacketTyreSetsData as PacketTyreSetsData25} from './f1-25/tyresets'
+import {PacketMotionExData as PacketMotionExData25} from './f1-25/motionex'
 import {PacketLapData as PacketLapData25} from './f1-25/lapdata'
 import {PacketParticipantsData as PacketParticipantsData25} from './f1-25/participants'
 import {PacketMotionData as PacketMotionData25} from './f1-25/motion'
@@ -41,7 +43,9 @@ export const VERSIONS: Readonly<Record<GameVersion, VersionDefinition>> = {
             8: PacketFinalClassificationData25,
             9: PacketLobbyInfoData25,
             10: PacketCarDamageData25,
-            11: PacketSessionHistoryData25
+            11: PacketSessionHistoryData25,
+            12: PacketTyreSetsData25,
+            13: PacketMotionExData25
         }
     },
     'f1-26': {label: 'F1 26', packetFormat: 2026, header: PacketHeader26, packets: {}}
