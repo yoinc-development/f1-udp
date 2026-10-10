@@ -6,6 +6,7 @@ import {PacketCarSetupData as PacketCarSetupData25} from './f1-25/carsetups'
 import {PacketCarTelemetryData as PacketCarTelemetryData25} from './f1-25/cartelemetry'
 import {PacketCarStatusData as PacketCarStatusData25} from './f1-25/carstatus'
 import {PacketFinalClassificationData as PacketFinalClassificationData25} from './f1-25/finalclassification'
+import {PacketLobbyInfoData as PacketLobbyInfoData25} from './f1-25/lobbyinfo'
 import {PacketLapData as PacketLapData25} from './f1-25/lapdata'
 import {PacketParticipantsData as PacketParticipantsData25} from './f1-25/participants'
 import {PacketMotionData as PacketMotionData25} from './f1-25/motion'
@@ -35,7 +36,8 @@ export const VERSIONS: Readonly<Record<GameVersion, VersionDefinition>> = {
             5: PacketCarSetupData25,
             6: PacketCarTelemetryData25,
             7: PacketCarStatusData25,
-            8: PacketFinalClassificationData25
+            8: PacketFinalClassificationData25,
+            9: PacketLobbyInfoData25
         }
     },
     'f1-26': {label: 'F1 26', packetFormat: 2026, header: PacketHeader26, packets: {}}
