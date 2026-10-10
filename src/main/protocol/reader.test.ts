@@ -107,3 +107,35 @@ describe('readStruct', () => {
         expect(() => readStruct(schema, Buffer.from([1, 2, 3]))).toThrow(/too short/)
     })
 })
+
+describe('readStruct unions', () => {
+    const schema = [
+        {name: 'code', type: 'string', length: 2},
+        {
+            name: 'details',
+            type: 'union',
+            discriminator: 'code',
+            variants: {
+                AA: [{name: 'small', type: 'uint8'}],
+                BB: [{name: 'big', type: 'uint32'}]
+            }
+        },
+        {name: 'tail', type: 'uint8'}
+    ] as const satisfies StructSchema
+
+    it('sizes a union as its largest variant', () => {
+        expect(sizeOf(schema)).toBe(7)
+    })
+
+    it('reads only the variant picked by the discriminator and skips the rest', () => {
+        const buffer = Buffer.from([0x42, 0x42, 1, 0, 0, 0, 9])
+
+        expect(readStruct(schema, buffer).value).toEqual({code: 'BB', details: {big: 1}, tail: 9})
+    })
+
+    it('reads an empty object for an unknown code', () => {
+        const buffer = Buffer.from([0x5a, 0x5a, 1, 0, 0, 0, 9])
+
+        expect(readStruct(schema, buffer).value).toEqual({code: 'ZZ', details: {}, tail: 9})
+    })
+})

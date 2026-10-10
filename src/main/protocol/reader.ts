@@ -59,6 +59,12 @@ export function readStruct(schema: StructSchema, buffer: Buffer, offset = 0): Re
                 position = nested.offset
                 break
             }
+            case 'union': {
+                const variant = field.variants[String(value[field.discriminator])]
+                value[field.name] = variant ? readStruct(variant, buffer, position).value : {}
+                position += sizeOf([field])
+                break
+            }
             case 'array': {
                 const items: FieldValue[] = []
                 for (let index = 0; index < field.length; index++) {

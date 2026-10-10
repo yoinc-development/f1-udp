@@ -35,7 +35,14 @@ export interface ArrayField {
     readonly of: ScalarType | StructSchema
 }
 
-export type FieldDefinition = ScalarField | StringField | StructField | ArrayField
+export interface UnionField {
+    readonly name: string
+    readonly type: 'union'
+    readonly discriminator: string
+    readonly variants: Readonly<Record<string, StructSchema>>
+}
+
+export type FieldDefinition = ScalarField | StringField | StructField | ArrayField | UnionField
 
 export type StructSchema = readonly FieldDefinition[]
 
@@ -51,6 +58,8 @@ function fieldSize(field: FieldDefinition): number {
             return sizeOf(field.schema)
         case 'array':
             return field.length * elementSize(field.of)
+        case 'union':
+            return Math.max(0, ...Object.values(field.variants).map(sizeOf))
         default:
             return FIELD_SIZES[field.type]
     }
