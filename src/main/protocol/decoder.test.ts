@@ -7,7 +7,7 @@ function header2021(): Buffer {
     buffer.writeUInt8(1, 2)
     buffer.writeUInt8(14, 3)
     buffer.writeUInt8(1, 4)
-    buffer.writeUInt8(6, 5)
+    buffer.writeUInt8(99, 5)
     buffer.writeBigUInt64LE(123456789012345n, 6)
     buffer.writeFloatLE(12.5, 14)
     buffer.writeUInt32LE(4321, 18)
@@ -23,7 +23,7 @@ function header2025Or2026(format: number, year: number): Buffer {
     buffer.writeUInt8(1, 3)
     buffer.writeUInt8(7, 4)
     buffer.writeUInt8(1, 5)
-    buffer.writeUInt8(6, 6)
+    buffer.writeUInt8(99, 6)
     buffer.writeBigUInt64LE(987654321098765n, 7)
     buffer.writeFloatLE(34.25, 15)
     buffer.writeUInt32LE(5000, 19)
@@ -37,14 +37,14 @@ describe('decode', () => {
     it('decodes the f1-2021 header', () => {
         const packet = decode(header2021(), 'f1-2021')
 
-        expect(packet.packetId).toBe(6)
+        expect(packet.packetId).toBe(99)
         expect(packet.data).toBeNull()
         expect(packet.header).toEqual({
             packetFormat: 2021,
             gameMajorVersion: 1,
             gameMinorVersion: 14,
             packetVersion: 1,
-            packetId: 6,
+            packetId: 99,
             sessionUID: 123456789012345n,
             sessionTime: 12.5,
             frameIdentifier: 4321,
@@ -59,7 +59,7 @@ describe('decode', () => {
     ] as const)('decodes the %s header', (version, format, year) => {
         const packet = decode(header2025Or2026(format, year), version)
 
-        expect(packet.packetId).toBe(6)
+        expect(packet.packetId).toBe(99)
         expect(packet.data).toBeNull()
         expect(packet.header).toEqual({
             packetFormat: format,
@@ -67,7 +67,7 @@ describe('decode', () => {
             gameMajorVersion: 1,
             gameMinorVersion: 7,
             packetVersion: 1,
-            packetId: 6,
+            packetId: 99,
             sessionUID: 987654321098765n,
             sessionTime: 34.25,
             frameIdentifier: 5000,
