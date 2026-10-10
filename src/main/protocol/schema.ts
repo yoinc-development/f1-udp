@@ -6,7 +6,8 @@ export const FIELD_SIZES = {
     uint32: 4,
     int32: 4,
     uint64: 8,
-    float: 4
+    float: 4,
+    double: 8
 } as const
 
 export type ScalarType = keyof typeof FIELD_SIZES

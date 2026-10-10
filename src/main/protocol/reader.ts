@@ -29,6 +29,8 @@ function readScalar(type: ScalarType, buffer: Buffer, offset: number): number | 
             return buffer.readBigUInt64LE(offset)
         case 'float':
             return buffer.readFloatLE(offset)
+        case 'double':
+            return buffer.readDoubleLE(offset)
     }
 }
 

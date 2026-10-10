@@ -12,7 +12,8 @@ describe('readStruct', () => {
             {name: 'e', type: 'uint32'},
             {name: 'f', type: 'int32'},
             {name: 'g', type: 'uint64'},
-            {name: 'h', type: 'float'}
+            {name: 'h', type: 'float'},
+            {name: 'i', type: 'double'}
         ] as const satisfies StructSchema
         const buffer = Buffer.alloc(sizeOf(schema))
         buffer.writeUInt8(200, 0)
@@ -23,6 +24,7 @@ describe('readStruct', () => {
         buffer.writeInt32LE(-2000000000, 10)
         buffer.writeBigUInt64LE(18446744073709551615n, 14)
         buffer.writeFloatLE(1.5, 22)
+        buffer.writeDoubleLE(5432.123456789, 26)
 
         const {value, offset} = readStruct(schema, buffer)
 
@@ -34,7 +36,8 @@ describe('readStruct', () => {
             e: 4000000000,
             f: -2000000000,
             g: 18446744073709551615n,
-            h: 1.5
+            h: 1.5,
+            i: 5432.123456789
         })
         expect(offset).toBe(buffer.length)
     })
