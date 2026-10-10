@@ -1,9 +1,14 @@
-import {FIELD_SIZES, sizeOf, type ScalarType, type StructSchema} from './schema'
+import {FIELD_SIZES, sizeOf, type NestedArray, type ScalarType, type StructSchema} from './schema'
 
 export type FieldValue = number | bigint | string | StructValue | FieldValue[]
 
 export interface StructValue {
     [name: string]: FieldValue
+}
+
+interface ArrayResult {
+    items: FieldValue[]
+    offset: number
 }
 
 export interface ReadResult {
@@ -29,6 +34,8 @@ function readScalar(type: ScalarType, buffer: Buffer, offset: number): number | 
             return buffer.readBigUInt64LE(offset)
         case 'float':
             return buffer.readFloatLE(offset)
+        case 'double':
+            return buffer.readDoubleLE(offset)
     }
 }
 
@@ -36,6 +43,26 @@ function readString(buffer: Buffer, offset: number, length: number): string {
     const bytes = buffer.subarray(offset, offset + length)
     const end = bytes.indexOf(0)
     return bytes.toString('utf8', 0, end === -1 ? length : end)
+}
+
+function readArray(array: NestedArray, buffer: Buffer, offset: number): ArrayResult {
+    const items: FieldValue[] = []
+    let position = offset
+    for (let index = 0; index < array.length; index++) {
+        if (typeof array.of === 'string') {
+            items.push(readScalar(array.of, buffer, position))
+            position += FIELD_SIZES[array.of]
+        } else if ('of' in array.of) {
+            const nested = readArray(array.of, buffer, position)
+            items.push(nested.items)
+            position = nested.offset
+        } else {
+            const nested = readStruct(array.of, buffer, position)
+            items.push(nested.value)
+            position = nested.offset
+        }
+    }
+    return {items, offset: position}
 }
 
 export function readStruct(schema: StructSchema, buffer: Buffer, offset = 0): ReadResult {
@@ -59,19 +86,16 @@ export function readStruct(schema: StructSchema, buffer: Buffer, offset = 0): Re
                 position = nested.offset
                 break
             }
+            case 'union': {
+                const variant = field.variants[String(value[field.discriminator])]
+                value[field.name] = variant ? readStruct(variant, buffer, position).value : {}
+                position += sizeOf([field])
+                break
+            }
             case 'array': {
-                const items: FieldValue[] = []
-                for (let index = 0; index < field.length; index++) {
-                    if (typeof field.of === 'string') {
-                        items.push(readScalar(field.of, buffer, position))
-                        position += FIELD_SIZES[field.of]
-                    } else {
-                        const nested = readStruct(field.of, buffer, position)
-                        items.push(nested.value)
-                        position = nested.offset
-                    }
-                }
-                value[field.name] = items
+                const nested = readArray(field, buffer, position)
+                value[field.name] = nested.items
+                position = nested.offset
                 break
             }
             default:
