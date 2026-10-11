@@ -1,0 +1,114 @@
+.shell {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--color-sidebar-bg);
+}
+
+.body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+}
+
+.sidebar {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    gap: var(--space-6);
+    width: 220px;
+    padding: var(--space-2) var(--space-4) var(--space-5);
+    background: var(--color-sidebar-bg);
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.label {
+    margin-bottom: var(--space-1);
+    padding: 0 var(--space-3);
+    color: var(--color-text-label);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: var(--label-letter-spacing);
+    text-transform: uppercase;
+}
+
+.item {
+    padding: var(--space-2) var(--space-3);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--color-text-muted);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.item:hover:not(:disabled) {
+    color: var(--color-text);
+    background: var(--color-surface-raised);
+}
+
+.item:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.active,
+.active:hover:not(:disabled) {
+    color: var(--color-accent-strong);
+    background: var(--color-accent-bg);
+}
+
+.status {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-top: auto;
+    padding: 0 var(--space-3);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.statusLine {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    overflow-wrap: anywhere;
+}
+
+.dot {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    margin-top: 5px;
+    border-radius: var(--radius-pill);
+    background: var(--color-text-dim);
+}
+
+.ok {
+    background: var(--color-success);
+}
+
+.error {
+    background: var(--color-danger);
+}
+
+.packets {
+    color: var(--color-text-dim);
+}
+
+.main {
+    flex: 1;
+    min-width: 0;
+    padding: var(--space-6) var(--space-7);
+    overflow: auto;
+    background: var(--color-bg);
+    border-top: 1px solid var(--color-border);
+    border-left: 1px solid var(--color-border);
+    border-top-left-radius: var(--radius-lg);
+}

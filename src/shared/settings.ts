@@ -5,9 +5,11 @@ export type GameVersion = (typeof GAME_VERSIONS)[number]
 export interface Settings {
     udpPort: number
     gameVersion: GameVersion
+    stopHotkey: string
 }
 
 export const DEFAULT_SETTINGS: Settings = {
     udpPort: 20777,
-    gameVersion: 'f1-25'
+    gameVersion: 'f1-25',
+    stopHotkey: 'Control+Shift+F12'
 }

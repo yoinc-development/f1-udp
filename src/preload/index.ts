@@ -13,6 +13,7 @@ const api: Api = {
         start: (port: number, gameVersion: GameVersion) =>
             ipcRenderer.invoke('udp:start', port, gameVersion),
         stop: () => ipcRenderer.invoke('udp:stop'),
+        decoded: (packetId: number) => ipcRenderer.invoke('udp:decoded', packetId),
         onSnapshot: (callback) => {
             const listener = (_event: IpcRendererEvent, snapshot: UdpSnapshot): void =>
                 callback(snapshot)
@@ -21,6 +22,11 @@ const api: Api = {
                 ipcRenderer.removeListener('udp:snapshot', listener)
             }
         }
+    },
+    director: {
+        start: (port: number, gameVersion: GameVersion) =>
+            ipcRenderer.invoke('director:start', port, gameVersion),
+        stop: () => ipcRenderer.invoke('director:stop')
     }
 }
 

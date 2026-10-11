@@ -26,9 +26,31 @@ export interface RecentPacket {
     frameIdentifier: number | null
 }
 
+export type PlainValue = number | string | PlainValue[] | {[name: string]: PlainValue}
+
+export interface DecodedEntry {
+    receivedAt: number
+    packetId: number
+    header: {[name: string]: PlainValue} | null
+    data: {[name: string]: PlainValue} | null
+    error: string | null
+}
+
+export interface DirectorState {
+    locked: boolean
+    hotkey: string | null
+}
+
+export interface DirectorStartResult {
+    started: boolean
+    error: string | null
+}
+
 export interface UdpSnapshot {
     status: ReceiverStatus
     totalPackets: number
     packets: PacketStats[]
     recent: RecentPacket[]
+    decodedIds: number[]
+    director: DirectorState
 }

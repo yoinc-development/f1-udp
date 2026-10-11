@@ -1,0 +1,6 @@
+.titleBar {
+    flex: none;
+    height: 32px;
+    background: var(--color-sidebar-bg);
+    -webkit-app-region: drag;
+}

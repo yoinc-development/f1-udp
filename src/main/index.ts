@@ -1,34 +1,73 @@
 import {join} from 'node:path'
-import {app, BrowserWindow, ipcMain, shell} from 'electron'
+import {app, BrowserWindow, globalShortcut, ipcMain, Menu, shell} from 'electron'
 import {DEFAULT_SETTINGS, type GameVersion, type Settings} from '@shared/settings'
-import type {UdpSnapshot} from '@shared/udp'
+import type {ReceiverStatus, UdpSnapshot} from '@shared/udp'
+import {DirectorSession} from './director/session'
 import {decode} from './protocol/decoder'
-import type {StructValue} from './protocol/reader'
+import {readStruct, type StructValue} from './protocol/reader'
 import {VERSIONS} from './protocol/versions'
 import {loadSettings, saveSettings} from './settings'
 import {UdpReceiver} from './udp/receiver'
+import {LatestPackets} from './udp/latest'
 import {RecentPackets} from './udp/recent'
 import {PacketStatistics} from './udp/stats'
 import {checkFormat} from './udp/version-guard'
 
 const SNAPSHOT_INTERVAL_MS = 500
+const TITLE_BAR_HEIGHT = 32
+const WINDOW_BACKGROUND = '#0f0f15'
+const TITLE_BAR_SYMBOLS = '#9b9ba6'
 
 const receiver = new UdpReceiver()
 const statistics = new PacketStatistics()
 const recent = new RecentPackets()
+const latest = new LatestPackets()
 let activeVersion: GameVersion = DEFAULT_SETTINGS.gameVersion
 let snapshotTimer: NodeJS.Timeout | null = null
+
+async function startReceiver(port: number, gameVersion: GameVersion): Promise<ReceiverStatus> {
+    activeVersion = gameVersion
+    statistics.reset()
+    recent.reset()
+    latest.reset()
+    return receiver.start(port)
+}
+
+const session = new DirectorSession({
+    startReceiver,
+    stopReceiver: () => receiver.stop(),
+    registerShortcut: (accelerator, callback) => {
+        try {
+            return globalShortcut.register(accelerator, callback)
+        } catch {
+            return false
+        }
+    },
+    unregisterShortcut: (accelerator) => globalShortcut.unregister(accelerator),
+    minimizeWindow: () => BrowserWindow.getAllWindows()[0]?.minimize(),
+    restoreWindow: () => {
+        const window = BrowserWindow.getAllWindows()[0]
+        if (!window) return
+        if (window.isMinimized()) window.restore()
+        window.show()
+        window.focus()
+    },
+    onChange: () => broadcastSnapshot()
+})
 
 function snapshot(): UdpSnapshot {
     return {
         status: receiver.status,
         totalPackets: statistics.totalPackets,
         packets: statistics.snapshot(Date.now()),
-        recent: recent.snapshot()
+        recent: recent.snapshot(),
+        decodedIds: latest.ids(),
+        director: session.state
     }
 }
 
 function broadcastSnapshot(): void {
+    session.sync(receiver.status.state)
     const current = snapshot()
     for (const window of BrowserWindow.getAllWindows()) {
         window.webContents.send('udp:snapshot', current)
@@ -47,7 +86,7 @@ function handlePacket(buffer: Buffer): void {
         return
     }
     const now = Date.now()
-    const header = readHeader(buffer)
+    const {header, data, error} = decodePacket(buffer)
     const packetId = header ? Number(header.packetId) : null
     statistics.record(buffer, now, packetId)
     recent.record({
@@ -58,13 +97,27 @@ function handlePacket(buffer: Buffer): void {
         sessionTime: header ? Number(header.sessionTime) : null,
         frameIdentifier: header ? Number(header.frameIdentifier) : null
     })
+    if (packetId !== null) latest.record({receivedAt: now, packetId, header, data, error})
 }
 
-function readHeader(buffer: Buffer): StructValue | null {
+interface DecodeOutcome {
+    header: StructValue | null
+    data: StructValue | null
+    error: string | null
+}
+
+function decodePacket(buffer: Buffer): DecodeOutcome {
     try {
-        return decode(buffer, activeVersion).header
-    } catch {
-        return null
+        const {header, data} = decode(buffer, activeVersion)
+        return {header, data, error: null}
+    } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        try {
+            const header = readStruct(VERSIONS[activeVersion].header, buffer).value
+            return {header, data: null, error: message}
+        } catch {
+            return {header: null, data: null, error: message}
+        }
     }
 }
 
@@ -72,7 +125,20 @@ function createWindow(): void {
     const window = new BrowserWindow({
         width: 1280,
         height: 800,
+        minWidth: 960,
+        minHeight: 600,
+        title: 'f1-udp',
+        backgroundColor: WINDOW_BACKGROUND,
         show: false,
+        ...(process.platform === 'win32' && {
+            titleBarStyle: 'hidden' as const,
+            titleBarOverlay: {
+                color: WINDOW_BACKGROUND,
+                symbolColor: TITLE_BAR_SYMBOLS,
+                height: TITLE_BAR_HEIGHT
+            }
+        }),
+        ...(process.platform === 'darwin' && {titleBarStyle: 'hiddenInset' as const}),
         webPreferences: {
             preload: join(__dirname, '../preload/index.js'),
             contextIsolation: true,
@@ -99,6 +165,8 @@ function createWindow(): void {
 app.whenReady().then(() => {
     const settingsDirectory = app.getPath('userData')
 
+    if (process.platform !== 'darwin') Menu.setApplicationMenu(null)
+
     ipcMain.handle('settings:get', () => loadSettings(settingsDirectory))
     ipcMain.handle('settings:set', (_event, partial: Partial<Settings>) =>
         saveSettings(settingsDirectory, partial)
@@ -106,15 +174,27 @@ app.whenReady().then(() => {
     ipcMain.handle('udp:snapshot', () => snapshot())
     ipcMain.handle('udp:start', async (_event, udpPort: number, gameVersion: GameVersion) => {
         const next = saveSettings(settingsDirectory, {udpPort, gameVersion})
-        activeVersion = next.gameVersion
-        statistics.reset()
-        recent.reset()
-        await receiver.start(next.udpPort)
+        await startReceiver(next.udpPort, next.gameVersion)
         broadcastSnapshot()
         return next
     })
+    ipcMain.handle('udp:decoded', (_event, packetId: number) => latest.get(packetId))
     ipcMain.handle('udp:stop', () => {
         receiver.stop()
+        broadcastSnapshot()
+    })
+    ipcMain.handle('director:start', async (_event, udpPort: number, gameVersion: GameVersion) => {
+        const next = saveSettings(settingsDirectory, {udpPort, gameVersion})
+        const result = await session.start({
+            port: next.udpPort,
+            gameVersion: next.gameVersion,
+            hotkey: next.stopHotkey
+        })
+        broadcastSnapshot()
+        return {settings: next, ...result}
+    })
+    ipcMain.handle('director:stop', () => {
+        session.stop()
         broadcastSnapshot()
     })
 
@@ -131,7 +211,9 @@ app.whenReady().then(() => {
 
 app.on('before-quit', () => {
     if (snapshotTimer) clearInterval(snapshotTimer)
+    session.stop()
     receiver.stop()
+    globalShortcut.unregisterAll()
 })
 
 app.on('window-all-closed', () => {

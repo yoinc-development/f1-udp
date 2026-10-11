@@ -12,12 +12,20 @@ function isGameVersion(value: unknown): value is GameVersion {
     return typeof value === 'string' && (GAME_VERSIONS as readonly string[]).includes(value)
 }
 
+const ACCELERATOR =
+    /^(?:(?:Control|Ctrl|Alt|Shift|Super|Meta|Command|Cmd|CommandOrControl|CmdOrCtrl)\+)*[A-Za-z0-9]+$/
+
+function isAccelerator(value: unknown): value is string {
+    return typeof value === 'string' && ACCELERATOR.test(value)
+}
+
 function merge(base: Settings, input: unknown): Settings {
     if (typeof input !== 'object' || input === null) return base
     const record = input as Record<string, unknown>
     return {
         udpPort: isPort(record.udpPort) ? record.udpPort : base.udpPort,
-        gameVersion: isGameVersion(record.gameVersion) ? record.gameVersion : base.gameVersion
+        gameVersion: isGameVersion(record.gameVersion) ? record.gameVersion : base.gameVersion,
+        stopHotkey: isAccelerator(record.stopHotkey) ? record.stopHotkey : base.stopHotkey
     }
 }
 

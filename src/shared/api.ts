@@ -1,5 +1,5 @@
 import type {GameVersion, Settings} from './settings'
-import type {UdpSnapshot} from './udp'
+import type {DecodedEntry, DirectorStartResult, UdpSnapshot} from './udp'
 
 export interface Api {
     settings: {
@@ -10,6 +10,14 @@ export interface Api {
         snapshot: () => Promise<UdpSnapshot>
         start: (port: number, gameVersion: GameVersion) => Promise<Settings>
         stop: () => Promise<void>
+        decoded: (packetId: number) => Promise<DecodedEntry | null>
         onSnapshot: (callback: (snapshot: UdpSnapshot) => void) => () => void
+    }
+    director: {
+        start: (
+            port: number,
+            gameVersion: GameVersion
+        ) => Promise<DirectorStartResult & {settings: Settings}>
+        stop: () => Promise<void>
     }
 }

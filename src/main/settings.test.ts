@@ -50,4 +50,17 @@ describe('settings', () => {
     it('accepts f1-26 as game version', () => {
         expect(saveSettings(directory, {gameVersion: 'f1-26'}).gameVersion).toBe('f1-26')
     })
+
+    it('accepts a valid stop hotkey', () => {
+        expect(saveSettings(directory, {stopHotkey: 'Alt+F9'}).stopHotkey).toBe('Alt+F9')
+    })
+
+    it('rejects an invalid stop hotkey', () => {
+        expect(saveSettings(directory, {stopHotkey: 'Ctrl++'}).stopHotkey).toBe(
+            DEFAULT_SETTINGS.stopHotkey
+        )
+        expect(saveSettings(directory, {stopHotkey: ''}).stopHotkey).toBe(
+            DEFAULT_SETTINGS.stopHotkey
+        )
+    })
 })

@@ -1,0 +1,52 @@
+:root {
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 32px;
+    --space-8: 40px;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-pill: 999px;
+
+    --font-sans: -apple-system, 'Segoe UI', system-ui, Roboto, sans-serif;
+    --font-mono: ui-monospace, Consolas, monospace;
+    --font-size-sm: 13px;
+    --font-size-base: 14px;
+    --font-size-md: 16px;
+    --font-size-lg: 20px;
+    --font-size-xl: 28px;
+    --label-letter-spacing: 0.06em;
+
+    --color-bg: #15151e;
+    --color-sidebar-bg: #0f0f15;
+    --color-surface: #1c1c26;
+    --color-surface-raised: #24242f;
+    --color-row-hover: #24242f;
+    --color-border: #2c2c38;
+    --color-border-strong: #3a3a48;
+
+    --color-text: #f4f4f6;
+    --color-text-muted: #9b9ba6;
+    --color-text-dim: #62626e;
+    --color-text-label: #7a7a86;
+
+    --color-accent: #e10600;
+    --color-accent-strong: #ff3b30;
+    --color-accent-bg: rgba(225, 6, 0, 0.14);
+    --color-accent-border: rgba(225, 6, 0, 0.6);
+    --color-accent-track: rgba(225, 6, 0, 0.24);
+    --color-on-accent: #ffffff;
+
+    --color-success: #00d26a;
+    --color-danger: #ffc400;
+    --color-danger-bg: rgba(255, 196, 0, 0.12);
+    --color-danger-border: rgba(255, 196, 0, 0.5);
+    --color-focus: #ff3b30;
+
+    color-scheme: dark;
+}
