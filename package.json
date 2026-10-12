@@ -1,6 +1,6 @@
 {
   "name": "f1-udp",
-  "version": "2.0.0-dev",
+  "version": "1.0.0",
   "description": "Automated stream director for F1 telemetry",
   "private": true,
   "main": "./out/main/index.js",

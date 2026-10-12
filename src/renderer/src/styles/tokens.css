@@ -48,5 +48,11 @@
     --color-danger-border: rgba(255, 196, 0, 0.5);
     --color-focus: #ff3b30;
 
+    --tyre-soft: #ff2d2d;
+    --tyre-medium: #ffd12e;
+    --tyre-hard: #f4f4f6;
+    --tyre-inter: #39b54a;
+    --tyre-wet: #2f7de1;
+
     color-scheme: dark;
 }

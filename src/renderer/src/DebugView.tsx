@@ -7,6 +7,7 @@ import table from './components/table.module.css'
 import styles from './DebugView.module.css'
 import DecodedPanel from './DecodedPanel'
 import RecentPanel from './RecentPanel'
+import WorldPanel from './WorldPanel'
 import type {Receiver} from './useReceiver'
 
 function formatAge(lastReceivedAt: number, now: number): string {
@@ -96,6 +97,8 @@ export default function DebugView({receiver, snapshot}: Props) {
                     </div>
                 )}
             </Panel>
+
+            <WorldPanel world={snapshot.world} gameVersion={version} />
 
             <div className={styles.grid}>
                 <RecentPanel recent={snapshot.recent} />

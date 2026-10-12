@@ -1,3 +1,5 @@
+import type {WorldSnapshot} from './world'
+
 export type ReceiverState = 'stopped' | 'listening' | 'error'
 
 export interface ReceiverStatus {
@@ -53,4 +55,5 @@ export interface UdpSnapshot {
     recent: RecentPacket[]
     decodedIds: number[]
     director: DirectorState
+    world: WorldSnapshot
 }

@@ -7,6 +7,7 @@ import {decode} from './protocol/decoder'
 import {readStruct, type StructValue} from './protocol/reader'
 import {VERSIONS} from './protocol/versions'
 import {loadSettings, saveSettings} from './settings'
+import {WorldState} from './state/world'
 import {UdpReceiver} from './udp/receiver'
 import {LatestPackets} from './udp/latest'
 import {RecentPackets} from './udp/recent'
@@ -22,6 +23,7 @@ const receiver = new UdpReceiver()
 const statistics = new PacketStatistics()
 const recent = new RecentPackets()
 const latest = new LatestPackets()
+const world = new WorldState()
 let activeVersion: GameVersion = DEFAULT_SETTINGS.gameVersion
 let snapshotTimer: NodeJS.Timeout | null = null
 
@@ -30,6 +32,7 @@ async function startReceiver(port: number, gameVersion: GameVersion): Promise<Re
     statistics.reset()
     recent.reset()
     latest.reset()
+    world.reset()
     return receiver.start(port)
 }
 
@@ -62,7 +65,8 @@ function snapshot(): UdpSnapshot {
         packets: statistics.snapshot(Date.now()),
         recent: recent.snapshot(),
         decodedIds: latest.ids(),
-        director: session.state
+        director: session.state,
+        world: world.snapshot(activeVersion)
     }
 }
 
@@ -98,6 +102,7 @@ function handlePacket(buffer: Buffer): void {
         frameIdentifier: header ? Number(header.frameIdentifier) : null
     })
     if (packetId !== null) latest.record({receivedAt: now, packetId, header, data, error})
+    if (header && data && packetId !== null) world.apply(activeVersion, header, packetId, data)
 }
 
 interface DecodeOutcome {

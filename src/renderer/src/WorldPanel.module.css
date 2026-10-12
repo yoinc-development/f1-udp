@@ -1,0 +1,77 @@
+.badge {
+    padding: 1px var(--space-2);
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-pill);
+    color: var(--color-text);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: var(--label-letter-spacing);
+    text-transform: uppercase;
+}
+
+.warning {
+    background: var(--color-danger-bg);
+    border-color: var(--color-danger-border);
+    color: var(--color-danger);
+}
+
+.pit {
+    background: var(--color-accent-bg);
+    border-color: var(--color-accent-border);
+    color: var(--color-accent-strong);
+}
+
+.focused td {
+    background: var(--color-accent-bg);
+}
+
+.out td {
+    color: var(--color-text-dim);
+}
+
+.position {
+    font-weight: 600;
+}
+
+.tyre {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.tyreDot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: 2px solid currentColor;
+    border-radius: var(--radius-pill);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.soft {
+    color: var(--tyre-soft);
+}
+
+.medium {
+    color: var(--tyre-medium);
+}
+
+.hard {
+    color: var(--tyre-hard);
+}
+
+.inter {
+    color: var(--tyre-inter);
+}
+
+.wet {
+    color: var(--tyre-wet);
+}
+
+.tall {
+    max-height: 32rem;
+}
