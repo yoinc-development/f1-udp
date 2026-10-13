@@ -33,7 +33,7 @@ export default function App() {
     const receiver = useReceiver()
     const {snapshot} = receiver
 
-    const status = snapshot ? describeStatus(snapshot.status) : null
+    const status = snapshot ? describeStatus(snapshot.status, snapshot.replay) : null
     const locked = snapshot?.director.locked ?? false
 
     return (

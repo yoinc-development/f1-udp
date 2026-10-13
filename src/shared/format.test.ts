@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest'
-import {formatGap, formatLapTime} from './format'
+import {formatBytes, formatDuration, formatGap, formatLapTime} from './format'
 
 describe('formatLapTime', () => {
     it('formats minutes, seconds and milliseconds', () => {
@@ -24,5 +24,25 @@ describe('formatGap', () => {
 
     it('shows a dash when there is no gap', () => {
         expect(formatGap(null)).toBe('-')
+    })
+})
+
+describe('formatBytes', () => {
+    it('picks the unit by size', () => {
+        expect(formatBytes(512)).toBe('512 B')
+        expect(formatBytes(1536)).toBe('1.5 KB')
+        expect(formatBytes(5 * 1024 * 1024)).toBe('5.0 MB')
+        expect(formatBytes(3 * 1024 * 1024 * 1024)).toBe('3.00 GB')
+    })
+})
+
+describe('formatDuration', () => {
+    it('formats minutes and seconds', () => {
+        expect(formatDuration(0)).toBe('00:00')
+        expect(formatDuration(65_400)).toBe('01:05')
+    })
+
+    it('adds hours when needed', () => {
+        expect(formatDuration(3_725_000)).toBe('1:02:05')
     })
 })

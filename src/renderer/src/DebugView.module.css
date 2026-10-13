@@ -22,3 +22,19 @@
         grid-template-columns: minmax(0, 1fr);
     }
 }
+
+.heading {
+    min-width: 5.5rem;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.note {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.error {
+    color: var(--color-danger);
+    font-size: var(--font-size-sm);
+}

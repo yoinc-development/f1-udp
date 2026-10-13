@@ -1,13 +1,16 @@
 import {useCallback, useEffect, useState} from 'react'
 import {DEFAULT_SETTINGS, type GameVersion} from '@shared/settings'
-import type {ReceiverStatus, UdpSnapshot} from '@shared/udp'
+import type {ReceiverStatus, ReplaySpeed, ReplayStatus, UdpSnapshot} from '@shared/udp'
 
 export interface StatusLine {
     tone: 'ok' | 'idle' | 'error'
     text: string
 }
 
-export function describeStatus(status: ReceiverStatus): StatusLine {
+export function describeStatus(status: ReceiverStatus, replay: ReplayStatus): StatusLine {
+    if (replay.state === 'playing' || replay.state === 'paused') {
+        return {tone: 'ok', text: `Replaying ${replay.file}`}
+    }
     if (status.state === 'listening') {
         return {tone: 'ok', text: `Listening on UDP port ${status.port}`}
     }
@@ -26,6 +29,7 @@ export function useReceiver() {
     const [version, setVersion] = useState<GameVersion>(DEFAULT_SETTINGS.gameVersion)
     const [hotkey, setHotkey] = useState(DEFAULT_SETTINGS.stopHotkey)
     const [directorError, setDirectorError] = useState<string | null>(null)
+    const [replaySpeed, setReplaySpeed] = useState<ReplaySpeed>(1)
     const [now, setNow] = useState(() => Date.now())
 
     useEffect(() => {
@@ -66,6 +70,39 @@ export function useReceiver() {
         void window.api.director.stop()
     }, [])
 
+    const startRecording = useCallback((): void => {
+        void window.api.recording.start()
+    }, [])
+
+    const stopRecording = useCallback((): void => {
+        void window.api.recording.stop()
+    }, [])
+
+    const openRecordings = useCallback((): void => {
+        void window.api.recording.openFolder()
+    }, [])
+
+    const openReplay = useCallback((): void => {
+        void window.api.replay.open(replaySpeed)
+    }, [replaySpeed])
+
+    const changeReplaySpeed = useCallback((next: ReplaySpeed): void => {
+        setReplaySpeed(next)
+        void window.api.replay.speed(next)
+    }, [])
+
+    const pauseReplay = useCallback((): void => {
+        void window.api.replay.pause()
+    }, [])
+
+    const resumeReplay = useCallback((): void => {
+        void window.api.replay.resume()
+    }, [])
+
+    const stopReplay = useCallback((): void => {
+        void window.api.replay.stop()
+    }, [])
+
     return {
         snapshot,
         now,
@@ -78,7 +115,16 @@ export function useReceiver() {
         start,
         stop,
         startDirector,
-        stopDirector
+        stopDirector,
+        replaySpeed,
+        startRecording,
+        stopRecording,
+        openRecordings,
+        openReplay,
+        changeReplaySpeed,
+        pauseReplay,
+        resumeReplay,
+        stopReplay
     }
 }
 

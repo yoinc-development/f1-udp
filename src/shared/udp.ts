@@ -1,3 +1,4 @@
+import type {GameVersion} from './settings'
 import type {WorldSnapshot} from './world'
 
 export type ReceiverState = 'stopped' | 'listening' | 'error'
@@ -48,6 +49,30 @@ export interface DirectorStartResult {
     error: string | null
 }
 
+export const REPLAY_SPEEDS = [1, 10] as const
+
+export type ReplaySpeed = (typeof REPLAY_SPEEDS)[number]
+
+export interface RecordingStatus {
+    active: boolean
+    file: string | null
+    packets: number
+    bytes: number
+    error?: string
+}
+
+export type ReplayState = 'idle' | 'playing' | 'paused' | 'ended' | 'error'
+
+export interface ReplayStatus {
+    state: ReplayState
+    file: string | null
+    gameVersion: GameVersion | null
+    positionMs: number
+    durationMs: number
+    speed: ReplaySpeed
+    error?: string
+}
+
 export interface UdpSnapshot {
     status: ReceiverStatus
     totalPackets: number
@@ -56,4 +81,6 @@ export interface UdpSnapshot {
     decodedIds: number[]
     director: DirectorState
     world: WorldSnapshot
+    recording: RecordingStatus
+    replay: ReplayStatus
 }
