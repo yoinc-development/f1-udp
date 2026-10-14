@@ -1,6 +1,7 @@
 import type {CarStatus, PitState, SafetyCar, Tyre, WorldCar} from '@shared/world'
 import {enumLabel} from '../protocol/enums'
 import {SessionType, Team, Track} from '../protocol/f1-25/appendices'
+import type {WorldEventKind} from './events'
 import {
     INVALID_CAR_INDEX,
     NO_TEAM_ID,
@@ -14,12 +15,43 @@ import type {WorldDraft} from './world'
 
 const PACKET_SESSION = 1
 const PACKET_LAP_DATA = 2
+const PACKET_EVENT = 3
 const PACKET_PARTICIPANTS = 4
 const PACKET_CAR_STATUS = 7
 const PACKET_CAR_DAMAGE = 10
 const PACKET_SESSION_HISTORY = 11
 
 const MINUTE_MS = 60000
+
+const RACE_SESSIONS: ReadonlySet<number> = new Set([
+    SessionType.race,
+    SessionType.race2,
+    SessionType.race3
+])
+
+interface EventMapping {
+    kind: WorldEventKind
+    cars: readonly string[]
+    details: readonly string[]
+}
+
+const EVENTS: Readonly<Record<string, EventMapping>> = {
+    COLL: {kind: 'collision', cars: ['vehicle1Idx', 'vehicle2Idx'], details: []},
+    RTMT: {kind: 'retirement', cars: ['vehicleIdx'], details: ['reason']},
+    PENA: {
+        kind: 'penalty',
+        cars: ['vehicleIdx'],
+        details: ['penaltyType', 'infringementType', 'otherVehicleIdx', 'time', 'lapNum']
+    },
+    FTLP: {kind: 'fastestLap', cars: ['vehicleIdx'], details: ['lapTime']},
+    OVTK: {
+        kind: 'overtake',
+        cars: ['overtakingVehicleIdx', 'beingOvertakenVehicleIdx'],
+        details: []
+    },
+    RDFL: {kind: 'redFlag', cars: [], details: []},
+    LGOT: {kind: 'lightsOut', cars: [], details: []}
+}
 
 const STATUS: Readonly<Record<number, CarStatus>> = {
     [ResultStatus.active]: 'active',
@@ -147,6 +179,7 @@ function applySession(header: StructValue, data: StructValue, draft: WorldDraft)
     draft.session = {
         track: TRACKS[asNumber(data.trackId)] ?? null,
         sessionType: sessionType ? humanize(sessionType) : null,
+        isRace: RACE_SESSIONS.has(asNumber(data.sessionType)),
         totalLaps: asNumber(data.totalLaps),
         safetyCar: SAFETY_CAR[asNumber(data.safetyCarStatus)] ?? 'none',
         timeLeftSeconds: asNumber(data.sessionTimeLeft)
@@ -180,6 +213,18 @@ function applySessionHistory(data: StructValue, draft: WorldDraft): void {
     if (lapTime > 0) carOf(draft, asNumber(data.carIdx)).bestLapMs = lapTime
 }
 
+function applyEvent(header: StructValue, data: StructValue, draft: WorldDraft): void {
+    const mapping = EVENTS[String(data.eventStringCode ?? '')]
+    if (!mapping) return
+    const details = (data.eventDetails ?? {}) as StructValue
+    draft.events.push({
+        time: asNumber(header.sessionTime),
+        kind: mapping.kind,
+        cars: mapping.cars.map((name) => asNumber(details[name])),
+        details: Object.fromEntries(mapping.details.map((name) => [name, asNumber(details[name])]))
+    })
+}
+
 export function applyF125(
     packetId: number,
     header: StructValue,
@@ -187,6 +232,7 @@ export function applyF125(
     draft: WorldDraft
 ): void {
     if (packetId === PACKET_LAP_DATA) applyLapData(data, draft)
+    else if (packetId === PACKET_EVENT) applyEvent(header, data, draft)
     else if (packetId === PACKET_PARTICIPANTS) applyParticipants(data, draft)
     else if (packetId === PACKET_SESSION) applySession(header, data, draft)
     else if (packetId === PACKET_CAR_STATUS) applyCarStatus(data, draft)

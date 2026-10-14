@@ -7,6 +7,7 @@ import controls from './components/controls.module.css'
 import Panel, {Empty} from './components/Panel'
 import table from './components/table.module.css'
 import styles from './DebugView.module.css'
+import DecisionsPanel from './DecisionsPanel'
 import DecodedPanel from './DecodedPanel'
 import RecentPanel from './RecentPanel'
 import WorldPanel from './WorldPanel'
@@ -31,7 +32,7 @@ interface Props {
 
 export default function DebugView({receiver, snapshot}: Props) {
     const {now, portInput, setPortInput, version, setVersion} = receiver
-    const {recording, replay} = snapshot
+    const {recording, replay, analysis} = snapshot
     const listening = snapshot.status.state === 'listening'
     const replaying = replay.state === 'playing' || replay.state === 'paused'
     const recordingName = recording.file?.split(/[\\/]/).pop()
@@ -133,7 +134,23 @@ export default function DebugView({receiver, snapshot}: Props) {
                         </span>
                     )
                 )}
+                {analysis.state === 'running' && (
+                    <span className={styles.note}>
+                        Analysing {Math.round(analysis.progress * 100)}%, {analysis.decisions}{' '}
+                        decisions
+                    </span>
+                )}
+                {analysis.state === 'done' && (
+                    <span className={styles.note}>
+                        {analysis.decisions} decisions saved to {analysis.file}
+                    </span>
+                )}
+                {analysis.state === 'error' && (
+                    <span className={styles.error}>Analysis failed: {analysis.error}</span>
+                )}
             </div>
+
+            {analysis.state !== 'idle' && <DecisionsPanel analysis={analysis} />}
 
             <Panel title="Packets by id">
                 {snapshot.packets.length === 0 ? (

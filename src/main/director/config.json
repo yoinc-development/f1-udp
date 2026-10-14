@@ -1,0 +1,56 @@
+{
+  "tickHz": 4,
+  "tiers": {
+    "raceStart": 1,
+    "crash": 1,
+    "battle": 2,
+    "overtake": 2,
+    "pitStop": 2,
+    "penalty": 2,
+    "retirement": 2,
+    "fastestLap": 2,
+    "leader": 3
+  },
+  "scores": {
+    "raceStart": 90,
+    "crash": 100,
+    "battle": 60,
+    "overtake": 50,
+    "pitStop": 40,
+    "penalty": 45,
+    "retirement": 45,
+    "fastestLap": 35,
+    "leader": 10
+  },
+  "durationsSeconds": {
+    "raceStart": 15,
+    "crash": 10,
+    "overtake": 6,
+    "pitStop": 8,
+    "penalty": 6,
+    "retirement": 6,
+    "fastestLap": 5
+  },
+  "positionWeights": [1, 0.9, 0.8, 0.7, 0.6],
+  "battle": {
+    "maxGapSeconds": 0.5,
+    "minSeconds": 5,
+    "lapOneMinCars": 3,
+    "extraCarBonus": 0.25
+  },
+  "crash": {
+    "windowSeconds": 5,
+    "wingDamageIncrease": 20,
+    "positionsLost": 3
+  },
+  "penalty": {
+    "types": [0, 1, 4, 6]
+  },
+  "switching": {
+    "minDwellSeconds": 15,
+    "hysteresis": 0.3,
+    "cooldownSeconds": 30,
+    "varietyAfterSeconds": 60,
+    "varietyFactor": 0.5
+  }
+}

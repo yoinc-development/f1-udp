@@ -1,5 +1,11 @@
 import type {GameVersion, Settings} from './settings'
-import type {DecodedEntry, DirectorStartResult, ReplaySpeed, UdpSnapshot} from './udp'
+import type {
+    DecisionEntry,
+    DecodedEntry,
+    DirectorStartResult,
+    ReplaySpeed,
+    UdpSnapshot
+} from './udp'
 
 export interface Api {
     settings: {
@@ -24,6 +30,9 @@ export interface Api {
         start: () => Promise<void>
         stop: () => Promise<void>
         openFolder: () => Promise<void>
+    }
+    analysis: {
+        decisions: () => Promise<DecisionEntry[]>
     }
     replay: {
         open: (speed: ReplaySpeed) => Promise<void>

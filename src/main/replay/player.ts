@@ -29,7 +29,7 @@ export async function openFileSource(path: string): Promise<ByteSource> {
 
 export type PacketHandler = (buffer: Buffer) => void
 
-function isGameVersion(value: string): value is GameVersion {
+export function isGameVersion(value: string): value is GameVersion {
     return (GAME_VERSIONS as readonly string[]).includes(value)
 }
 

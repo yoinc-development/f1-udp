@@ -73,6 +73,26 @@ export interface ReplayStatus {
     error?: string
 }
 
+export interface DecisionEntry {
+    t: number
+    lap: number
+    target: {car: number; name: string}
+    reason: string
+    kind: string
+    tier: number
+    score: number
+    current: {car: number; score: number} | null
+    rule: string
+}
+
+export interface AnalysisStatus {
+    state: 'idle' | 'running' | 'done' | 'error'
+    file: string | null
+    progress: number
+    decisions: number
+    error?: string
+}
+
 export interface UdpSnapshot {
     status: ReceiverStatus
     totalPackets: number
@@ -83,4 +103,5 @@ export interface UdpSnapshot {
     world: WorldSnapshot
     recording: RecordingStatus
     replay: ReplayStatus
+    analysis: AnalysisStatus
 }

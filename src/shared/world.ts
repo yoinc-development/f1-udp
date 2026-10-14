@@ -9,6 +9,7 @@ export type CarStatus = 'active' | 'finished' | 'dnf' | 'dsq' | 'nc' | 'retired'
 export interface WorldSession {
     track: string | null
     sessionType: string | null
+    isRace: boolean
     currentLap: number
     totalLaps: number
     safetyCar: SafetyCar

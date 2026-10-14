@@ -12,7 +12,15 @@ import {
     type OpenDialogOptions
 } from 'electron'
 import {DEFAULT_SETTINGS, type GameVersion, type Settings} from '@shared/settings'
-import {REPLAY_SPEEDS, type ReceiverStatus, type ReplaySpeed, type UdpSnapshot} from '@shared/udp'
+import {
+    REPLAY_SPEEDS,
+    type AnalysisStatus,
+    type ReceiverStatus,
+    type ReplaySpeed,
+    type UdpSnapshot
+} from '@shared/udp'
+import {analyzeRecording, readDecisions} from './director/analyze'
+import {loadDirectorConfig} from './director/config'
 import {DirectorSession} from './director/session'
 import {decode} from './protocol/decoder'
 import {readStruct, type StructValue} from './protocol/reader'
@@ -39,6 +47,10 @@ const latest = new LatestPackets()
 const world = new WorldState()
 const recorder = new Recorder()
 const player = new Player()
+const IDLE_ANALYSIS: AnalysisStatus = {state: 'idle', file: null, progress: 0, decisions: 0}
+let analysis: AnalysisStatus = IDLE_ANALYSIS
+let analysisAbort: AbortController | null = null
+let analysisFile: string | null = null
 let activeVersion: GameVersion = DEFAULT_SETTINGS.gameVersion
 let snapshotTimer: NodeJS.Timeout | null = null
 
@@ -58,6 +70,44 @@ async function startReceiver(port: number, gameVersion: GameVersion): Promise<Re
     player.stop()
     resetPipeline(gameVersion)
     return receiver.start(port)
+}
+
+async function startAnalysis(path: string): Promise<void> {
+    analysisAbort?.abort()
+    const abort = new AbortController()
+    analysisAbort = abort
+    analysis = {...IDLE_ANALYSIS, state: 'running'}
+    analysisFile = null
+    const source = await openFileSource(path).catch(() => null)
+    if (!source) {
+        analysis = {...IDLE_ANALYSIS, state: 'error', error: 'The recording could not be opened'}
+        return
+    }
+    try {
+        const result = await analyzeRecording(
+            source,
+            path,
+            loadDirectorConfig(app.getPath('userData')),
+            {
+                signal: abort.signal,
+                onProgress: (progress, decisions) => {
+                    if (analysisAbort === abort) analysis = {...analysis, progress, decisions}
+                }
+            }
+        )
+        if (analysisAbort !== abort) return
+        analysisFile = result.file
+        analysis = result.file
+            ? {state: 'done', file: basename(result.file), progress: 1, decisions: result.decisions}
+            : IDLE_ANALYSIS
+    } catch (error) {
+        if (analysisAbort === abort) {
+            const message = error instanceof Error ? error.message : String(error)
+            analysis = {...IDLE_ANALYSIS, state: 'error', error: message}
+        }
+    } finally {
+        await source.close().catch(() => undefined)
+    }
 }
 
 async function startReplay(path: string, speed: ReplaySpeed): Promise<void> {
@@ -107,7 +157,8 @@ function snapshot(): UdpSnapshot {
         director: session.state,
         world: world.snapshot(activeVersion),
         recording: recorder.status,
-        replay: player.status
+        replay: player.status,
+        analysis
     }
 }
 
@@ -278,8 +329,17 @@ app.whenReady().then(() => {
             : await dialog.showOpenDialog(options)
         const path = result.filePaths[0]
         if (result.canceled || !path) return
+        void startAnalysis(path)
         await startReplay(path, REPLAY_SPEEDS.includes(speed) ? speed : 1)
         broadcastSnapshot()
+    })
+    ipcMain.handle('analysis:decisions', async () => {
+        if (!analysisFile) return []
+        try {
+            return await readDecisions(analysisFile)
+        } catch {
+            return []
+        }
     })
     ipcMain.handle('replay:pause', () => {
         player.pause()

@@ -2,14 +2,17 @@ import type {GameVersion} from '@shared/settings'
 import type {SafetyCar, WorldCar, WorldSession, WorldSnapshot} from '@shared/world'
 import type {StructValue} from '../protocol/reader'
 import {applyF125} from './f1-25'
+import type {WorldEvent} from './events'
 
 export type SessionInfo = Pick<
     WorldSession,
-    'track' | 'sessionType' | 'totalLaps' | 'timeLeftSeconds'
+    'track' | 'sessionType' | 'totalLaps' | 'timeLeftSeconds' | 'isRace'
 > & {safetyCar: SafetyCar}
 
 export interface WorldDraft {
     sessionUid: string | null
+    sessionTime: number
+    events: WorldEvent[]
     playerCarIndex: number | null
     spectatorCarIndex: number | null
     spectating: boolean
@@ -32,6 +35,8 @@ const ADAPTERS: Partial<Record<GameVersion, WorldAdapter>> = {
 export function createDraft(): WorldDraft {
     return {
         sessionUid: null,
+        sessionTime: 0,
+        events: [],
         playerCarIndex: null,
         spectatorCarIndex: null,
         spectating: false,
@@ -44,8 +49,22 @@ export function createDraft(): WorldDraft {
 export class WorldState {
     private draft = createDraft()
 
+    get sessionUid(): string | null {
+        return this.draft.sessionUid
+    }
+
+    get sessionTime(): number {
+        return this.draft.sessionTime
+    }
+
     reset(): void {
         this.draft = createDraft()
+    }
+
+    takeEvents(): WorldEvent[] {
+        const events = this.draft.events
+        this.draft.events = []
+        return events
     }
 
     apply(
@@ -59,6 +78,7 @@ export class WorldState {
         const sessionUid = String(header.sessionUID)
         if (this.draft.sessionUid !== null && this.draft.sessionUid !== sessionUid) this.reset()
         this.draft.sessionUid = sessionUid
+        this.draft.sessionTime = Number(header.sessionTime ?? 0)
         adapter(packetId, header, data, this.draft)
     }
 

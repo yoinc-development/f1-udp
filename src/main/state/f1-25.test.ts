@@ -226,6 +226,7 @@ describe('F1 25 world state', () => {
         expect(world.snapshot('f1-25').session).toEqual({
             track: 'Monaco',
             sessionType: 'Race',
+            isRace: true,
             currentLap: 12,
             totalLaps: 58,
             safetyCar: 'virtual',
@@ -266,5 +267,98 @@ describe('F1 25 world state', () => {
         })
 
         expect(world.snapshot('f1-25').session?.focusedCarIndex).toBeNull()
+    })
+    it('marks race sessions only', () => {
+        const session = (sessionType: number): StructValue => ({
+            trackId: 0,
+            sessionType,
+            totalLaps: 5,
+            safetyCarStatus: 0,
+            sessionTimeLeft: 0,
+            isSpectating: 1,
+            spectatorCarIndex: 255
+        })
+        const isRace = (sessionType: number): boolean | undefined => {
+            const state = new WorldState()
+            state.apply('f1-25', header(255), 1, session(sessionType))
+            return state.snapshot('f1-25').session?.isRace
+        }
+
+        expect([15, 16, 17].map(isRace)).toEqual([true, true, true])
+        expect([1, 5, 10, 18].map(isRace)).toEqual([false, false, false, false])
+    })
+
+    describe('events', () => {
+        const at = (sessionTime: number): StructValue => ({...header(), sessionTime})
+
+        it('turns event packets into timestamped world events and clears them when taken', () => {
+            world.apply('f1-25', at(12.5), 3, {
+                eventStringCode: 'COLL',
+                eventDetails: {vehicle1Idx: 3, vehicle2Idx: 7}
+            })
+            world.apply('f1-25', at(13), 3, {
+                eventStringCode: 'PENA',
+                eventDetails: {
+                    penaltyType: 4,
+                    infringementType: 7,
+                    vehicleIdx: 5,
+                    otherVehicleIdx: 255,
+                    time: 5,
+                    lapNum: 2
+                }
+            })
+
+            expect(world.takeEvents()).toEqual([
+                {time: 12.5, kind: 'collision', cars: [3, 7], details: {}},
+                {
+                    time: 13,
+                    kind: 'penalty',
+                    cars: [5],
+                    details: {
+                        penaltyType: 4,
+                        infringementType: 7,
+                        otherVehicleIdx: 255,
+                        time: 5,
+                        lapNum: 2
+                    }
+                }
+            ])
+            expect(world.takeEvents()).toEqual([])
+        })
+
+        it('maps retirement, fastest lap, overtake, red flag and lights out', () => {
+            const send = (code: string, eventDetails: StructValue): void =>
+                world.apply('f1-25', at(1), 3, {eventStringCode: code, eventDetails})
+            send('RTMT', {vehicleIdx: 4, reason: 2})
+            send('FTLP', {vehicleIdx: 6, lapTime: 83.5})
+            send('OVTK', {overtakingVehicleIdx: 1, beingOvertakenVehicleIdx: 2})
+            send('RDFL', {})
+            send('LGOT', {})
+
+            expect(world.takeEvents().map((item) => [item.kind, item.cars, item.details])).toEqual([
+                ['retirement', [4], {reason: 2}],
+                ['fastestLap', [6], {lapTime: 83.5}],
+                ['overtake', [1, 2], {}],
+                ['redFlag', [], {}],
+                ['lightsOut', [], {}]
+            ])
+        })
+
+        it('ignores event codes the director does not use', () => {
+            world.apply('f1-25', at(1), 3, {
+                eventStringCode: 'BUTN',
+                eventDetails: {buttonStatus: 1}
+            })
+            world.apply('f1-25', at(1), 3, {eventStringCode: 'SSTA', eventDetails: {}})
+
+            expect(world.takeEvents()).toEqual([])
+        })
+
+        it('keeps the session time and session uid of the latest packet', () => {
+            world.apply('f1-25', at(42.5), 3, {eventStringCode: 'LGOT', eventDetails: {}})
+
+            expect(world.sessionTime).toBe(42.5)
+            expect(world.sessionUid).toBe(String(UID))
+        })
     })
 })

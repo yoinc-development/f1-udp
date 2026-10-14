@@ -33,6 +33,9 @@ const api: Api = {
         stop: () => ipcRenderer.invoke('recording:stop'),
         openFolder: () => ipcRenderer.invoke('recording:openFolder')
     },
+    analysis: {
+        decisions: () => ipcRenderer.invoke('analysis:decisions')
+    },
     replay: {
         open: (speed: ReplaySpeed) => ipcRenderer.invoke('replay:open', speed),
         pause: () => ipcRenderer.invoke('replay:pause'),
