@@ -299,7 +299,9 @@ app.whenReady().then(() => {
     })
 
     receiver.onPacket((buffer) => {
-        recorder.write(buffer, Date.now())
+        if (checkFormat(buffer, VERSIONS[activeVersion].packetFormat).result === 'ok') {
+            recorder.write(buffer, Date.now())
+        }
         handlePacket(buffer)
     })
 
