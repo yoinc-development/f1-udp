@@ -93,6 +93,14 @@ export interface AnalysisStatus {
     error?: string
 }
 
+export type LiveStage = 'idle' | 'armed' | 'directing' | 'finished'
+
+export interface LiveDirectorStatus {
+    stage: LiveStage
+    current: DecisionEntry | null
+    decisions: DecisionEntry[]
+}
+
 export interface UdpSnapshot {
     status: ReceiverStatus
     totalPackets: number
@@ -100,6 +108,7 @@ export interface UdpSnapshot {
     recent: RecentPacket[]
     decodedIds: number[]
     director: DirectorState
+    live: LiveDirectorStatus
     world: WorldSnapshot
     recording: RecordingStatus
     replay: ReplayStatus

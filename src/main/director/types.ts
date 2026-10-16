@@ -14,6 +14,8 @@ export type PoiKind =
 
 export type Tier = 1 | 2 | 3
 
+export type DirectorStage = 'armed' | 'directing' | 'finished'
+
 export type Phase = 'inactive' | 'lap1' | 'race' | 'lastLap'
 
 export interface Poi {

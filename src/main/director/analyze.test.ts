@@ -12,6 +12,7 @@ import {DEFAULT_CONFIG} from './config'
 const FORMAT = 2025
 const SESSION_PACKET = 1
 const LAP_PACKET = 2
+const EVENT_PACKET = 3
 
 let directory: string
 
@@ -62,6 +63,11 @@ frames.push({
         spectatorCarIndex: 255
     }
 })
+frames.push({
+    packetId: EVENT_PACKET,
+    time: 0,
+    data: {eventStringCode: 'LGOT', eventDetails: {}}
+})
 for (let time = 0; time <= 30; time += 0.5) {
     const idle = {resultStatus: 0}
     frames.push({
@@ -86,13 +92,14 @@ function decodeStub(buffer: Buffer): DecodedPacket {
     }
 }
 
-function recording(gameVersion = 'f1-25'): Buffer {
+function recording(gameVersion = 'f1-25', skip: number[] = []): Buffer {
     const header = encodeHeader({gameVersion, port: 20777, startedAt: Date.UTC(2026, 9, 14)})
-    const records = frames.map((_, index) => {
+    const records = frames.flatMap((_, index) => {
+        if (skip.includes(index)) return []
         const packet = Buffer.alloc(3)
         packet.writeUInt16LE(FORMAT, 0)
         packet.writeUInt8(index, 2)
-        return encodeRecord(index * 10, packet)
+        return [encodeRecord(index * 10, packet)]
     })
     return Buffer.concat([header, ...records])
 }
@@ -129,10 +136,21 @@ describe('analyzeRecording', () => {
         expect(first).toMatchObject({
             t: 0.5,
             target: {car: 0},
-            kind: 'leader',
+            kind: 'raceStart',
             rule: 'initial target'
         })
         expect(second).toMatchObject({t: 15.5, target: {car: 1}, kind: 'battle'})
+    })
+
+    it('makes no decisions for a recording without lights out', async () => {
+        const result = await analyzeRecording(
+            memorySource(recording('f1-25', [1])),
+            join(directory, 'late.f1rec'),
+            DEFAULT_CONFIG,
+            {decode: decodeStub}
+        )
+
+        expect(result.decisions).toBe(0)
     })
 
     it('writes the same file when run twice', async () => {

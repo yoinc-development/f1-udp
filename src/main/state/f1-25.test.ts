@@ -326,7 +326,7 @@ describe('F1 25 world state', () => {
             expect(world.takeEvents()).toEqual([])
         })
 
-        it('maps retirement, fastest lap, overtake, red flag and lights out', () => {
+        it('maps retirement, fastest lap, overtake, red flag, lights out and session ended', () => {
             const send = (code: string, eventDetails: StructValue): void =>
                 world.apply('f1-25', at(1), 3, {eventStringCode: code, eventDetails})
             send('RTMT', {vehicleIdx: 4, reason: 2})
@@ -334,13 +334,15 @@ describe('F1 25 world state', () => {
             send('OVTK', {overtakingVehicleIdx: 1, beingOvertakenVehicleIdx: 2})
             send('RDFL', {})
             send('LGOT', {})
+            send('SEND', {})
 
             expect(world.takeEvents().map((item) => [item.kind, item.cars, item.details])).toEqual([
                 ['retirement', [4], {reason: 2}],
                 ['fastestLap', [6], {lapTime: 83.5}],
                 ['overtake', [1, 2], {}],
                 ['redFlag', [], {}],
-                ['lightsOut', [], {}]
+                ['lightsOut', [], {}],
+                ['sessionEnded', [], {}]
             ])
         })
 

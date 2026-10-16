@@ -20,7 +20,8 @@ import {
     type UdpSnapshot
 } from '@shared/udp'
 import {analyzeRecording, readDecisions} from './director/analyze'
-import {loadDirectorConfig} from './director/config'
+import {loadDirectorConfig, DEFAULT_CONFIG} from './director/config'
+import {LiveDirector} from './director/live'
 import {DirectorSession} from './director/session'
 import {decode} from './protocol/decoder'
 import {readStruct, type StructValue} from './protocol/reader'
@@ -45,6 +46,7 @@ const statistics = new PacketStatistics()
 const recent = new RecentPackets()
 const latest = new LatestPackets()
 const world = new WorldState()
+const live = new LiveDirector(DEFAULT_CONFIG)
 const recorder = new Recorder()
 const player = new Player()
 const IDLE_ANALYSIS: AnalysisStatus = {state: 'idle', file: null, progress: 0, decisions: 0}
@@ -64,6 +66,7 @@ function resetPipeline(gameVersion: GameVersion): void {
     recent.reset()
     latest.reset()
     world.reset()
+    live.reset(loadDirectorConfig(app.getPath('userData')))
 }
 
 async function startReceiver(port: number, gameVersion: GameVersion): Promise<ReceiverStatus> {
@@ -155,6 +158,16 @@ function snapshot(): UdpSnapshot {
         recent: recent.snapshot(),
         decodedIds: latest.ids(),
         director: session.state,
+        live: {
+            stage:
+                receiver.status.state === 'listening' ||
+                player.status.state === 'playing' ||
+                player.status.state === 'paused'
+                    ? live.stage
+                    : 'idle',
+            current: live.current,
+            decisions: live.recent
+        },
         world: world.snapshot(activeVersion),
         recording: recorder.status,
         replay: player.status,
@@ -195,7 +208,10 @@ function handlePacket(buffer: Buffer): void {
         frameIdentifier: header ? Number(header.frameIdentifier) : null
     })
     if (packetId !== null) latest.record({receivedAt: now, packetId, header, data, error})
-    if (header && data && packetId !== null) world.apply(activeVersion, header, packetId, data)
+    if (header && data && packetId !== null) {
+        world.apply(activeVersion, header, packetId, data)
+        live.tick(world, activeVersion)
+    }
 }
 
 interface DecodeOutcome {

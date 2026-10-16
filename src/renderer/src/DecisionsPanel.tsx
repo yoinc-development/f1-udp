@@ -1,16 +1,18 @@
 import {useEffect, useState} from 'react'
 import {formatDuration} from '@shared/format'
-import type {AnalysisStatus, DecisionEntry} from '@shared/udp'
+import type {AnalysisStatus, DecisionEntry, LiveDirectorStatus} from '@shared/udp'
 import Panel, {Empty} from './components/Panel'
 import table from './components/table.module.css'
 
 interface Props {
     analysis: AnalysisStatus
+    live: LiveDirectorStatus
 }
 
-export default function DecisionsPanel({analysis}: Props) {
+export default function DecisionsPanel({analysis, live}: Props) {
     const [loaded, setLoaded] = useState<DecisionEntry[]>([])
-    const decisions = analysis.state === 'done' ? loaded : []
+    const showLive = live.decisions.length > 0
+    const decisions = showLive ? live.decisions : analysis.state === 'done' ? loaded : []
 
     useEffect(() => {
         if (analysis.state !== 'done') return
@@ -23,16 +25,18 @@ export default function DecisionsPanel({analysis}: Props) {
         }
     }, [analysis.state, analysis.file])
 
-    const actions = analysis.state === 'done' && <span>{decisions.length} decisions</span>
+    const actions = (showLive || analysis.state === 'done') && (
+        <span>{decisions.length} decisions</span>
+    )
 
     return (
         <Panel title="Director decisions" actions={actions}>
-            {analysis.state === 'running' ? (
+            {!showLive && analysis.state === 'running' ? (
                 <Empty>Analysing the recording, {Math.round(analysis.progress * 100)}%.</Empty>
-            ) : analysis.state === 'error' ? (
+            ) : !showLive && analysis.state === 'error' ? (
                 <Empty>Analysis failed: {analysis.error}</Empty>
             ) : decisions.length === 0 ? (
-                <Empty>The director made no decisions for this recording.</Empty>
+                <Empty>The director made no decisions yet.</Empty>
             ) : (
                 <div className={table.scroll}>
                     <table className={table.table}>

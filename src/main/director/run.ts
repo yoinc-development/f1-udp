@@ -1,10 +1,12 @@
+import type {GameVersion} from '@shared/settings'
 import type {WorldSnapshot} from '@shared/world'
 import type {WorldEvent} from '../state/events'
+import type {WorldState} from '../state/world'
 import type {DirectorConfig} from './config'
 import {createDirectorMemory, decide, type DirectorMemory} from './decide'
 import {createDetectorState, detect, type DetectorState} from './detectors'
 import {isNeutral, phaseOf} from './phase'
-import type {Decision} from './types'
+import type {Decision, DirectorStage} from './types'
 
 export interface TickInput {
     now: number
@@ -19,6 +21,11 @@ export class DirectorRun {
     private redFlag = false
     private lastTick: number | null = null
     private sessionUid: string | null = null
+    private currentStage: DirectorStage = 'armed'
+
+    get stage(): DirectorStage {
+        return this.currentStage
+    }
 
     constructor(private readonly config: DirectorConfig) {}
 
@@ -38,7 +45,13 @@ export class DirectorRun {
         for (const event of events) {
             if (event.kind === 'redFlag') this.redFlag = true
             else if (event.kind === 'lightsOut') this.redFlag = false
+            if (event.kind === 'lightsOut' && this.currentStage === 'armed') {
+                this.currentStage = 'directing'
+            } else if (event.kind === 'sessionEnded' && this.currentStage === 'directing') {
+                this.currentStage = 'finished'
+            }
         }
+        if (this.currentStage !== 'directing') return null
 
         const phase = phaseOf(snapshot)
         const detected = detect({now, snapshot, events}, this.detectors, this.config)
@@ -62,7 +75,23 @@ export class DirectorRun {
         this.detectors = createDetectorState()
         this.memory = createDirectorMemory()
         this.redFlag = false
+        this.currentStage = 'armed'
         this.lastTick = null
         this.sessionUid = sessionUid
     }
+}
+
+export function tickWorld(
+    run: DirectorRun,
+    world: WorldState,
+    gameVersion: GameVersion
+): Decision | null {
+    const now = world.sessionTime
+    if (!run.isDue(now)) return null
+    return run.tick({
+        now,
+        sessionUid: world.sessionUid,
+        snapshot: world.snapshot(gameVersion),
+        events: world.takeEvents()
+    })
 }

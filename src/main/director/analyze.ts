@@ -8,7 +8,7 @@ import {isGameVersion, type ByteSource} from '../replay/player'
 import {WorldState} from '../state/world'
 import {checkFormat} from '../udp/version-guard'
 import type {DirectorConfig} from './config'
-import {DirectorRun} from './run'
+import {DirectorRun, tickWorld} from './run'
 import type {Decision} from './types'
 
 const CHUNK_SIZE = 1024 * 1024
@@ -41,14 +41,7 @@ export class DecisionAnalyzer {
         } catch {
             return null
         }
-        const now = this.world.sessionTime
-        if (!this.run.isDue(now)) return null
-        return this.run.tick({
-            now,
-            sessionUid: this.world.sessionUid,
-            snapshot: this.world.snapshot(this.gameVersion),
-            events: this.world.takeEvents()
-        })
+        return tickWorld(this.run, this.world, this.gameVersion)
     }
 }
 

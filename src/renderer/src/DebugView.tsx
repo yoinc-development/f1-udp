@@ -1,6 +1,6 @@
 import {formatBytes, formatDuration} from '@shared/format'
 import {GAME_VERSIONS, type GameVersion} from '@shared/settings'
-import {REPLAY_SPEEDS, type ReplaySpeed, type UdpSnapshot} from '@shared/udp'
+import {REPLAY_SPEEDS, type LiveStage, type ReplaySpeed, type UdpSnapshot} from '@shared/udp'
 import Button from './components/Button'
 import Segmented from './components/Segmented'
 import controls from './components/controls.module.css'
@@ -21,6 +21,13 @@ function speedOf(label: SpeedLabel): ReplaySpeed {
     return label === '10x' ? 10 : 1
 }
 
+const STAGE_LABELS: Record<LiveStage, string> = {
+    idle: 'Idle',
+    armed: 'Armed, waiting for lights out',
+    directing: 'Directing',
+    finished: 'Finished'
+}
+
 function formatAge(lastReceivedAt: number, now: number): string {
     return `${((now - lastReceivedAt) / 1000).toFixed(1)} s ago`
 }
@@ -32,7 +39,7 @@ interface Props {
 
 export default function DebugView({receiver, snapshot}: Props) {
     const {now, portInput, setPortInput, version, setVersion} = receiver
-    const {recording, replay, analysis} = snapshot
+    const {recording, replay, analysis, live} = snapshot
     const listening = snapshot.status.state === 'listening'
     const replaying = replay.state === 'playing' || replay.state === 'paused'
     const recordingName = recording.file?.split(/[\\/]/).pop()
@@ -150,7 +157,20 @@ export default function DebugView({receiver, snapshot}: Props) {
                 )}
             </div>
 
-            {analysis.state !== 'idle' && <DecisionsPanel analysis={analysis} />}
+            <div className={styles.controls}>
+                <span className={styles.heading}>Director</span>
+                <span className={styles.note}>{STAGE_LABELS[live.stage]}</span>
+                {live.current && (
+                    <span className={styles.note}>
+                        {formatDuration(live.current.t * 1000)} · lap {live.current.lap} ·{' '}
+                        {live.current.kind} · {live.current.target.name}: {live.current.reason}
+                    </span>
+                )}
+            </div>
+
+            {(analysis.state !== 'idle' || live.decisions.length > 0) && (
+                <DecisionsPanel analysis={analysis} live={live} />
+            )}
 
             <Panel title="Packets by id">
                 {snapshot.packets.length === 0 ? (

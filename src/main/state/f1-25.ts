@@ -50,7 +50,8 @@ const EVENTS: Readonly<Record<string, EventMapping>> = {
         details: []
     },
     RDFL: {kind: 'redFlag', cars: [], details: []},
-    LGOT: {kind: 'lightsOut', cars: [], details: []}
+    LGOT: {kind: 'lightsOut', cars: [], details: []},
+    SEND: {kind: 'sessionEnded', cars: [], details: []}
 }
 
 const STATUS: Readonly<Record<number, CarStatus>> = {
